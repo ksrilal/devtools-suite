@@ -9,24 +9,37 @@ import './globals.css'
 const inter = Inter({ subsets: ['latin'], variable: '--font-inter' })
 
 export const metadata: Metadata = {
-  metadataBase: new URL(process.env['NEXT_PUBLIC_SITE_URL'] ?? 'https://devtools-suite.vercel.app'),
+  metadataBase: new URL(process.env['NEXT_PUBLIC_SITE_URL'] ?? 'https://devtoolssuite.dev'),
   title: {
     template: '%s | DevTools Suite',
-    default: 'DevTools Suite – Free Developer Tools Online',
+    default: 'DevTools Suite – Free Online Developer Tools',
   },
   description:
-    'Free online developer tools: JSON formatter, cron generator, diff checker, JWT decoder, regex tester, and smart checklist. Fast, private, zero login.',
+    'Free privacy-first developer tools that run entirely in your browser. JSON formatter, JWT decoder, regex tester, cron generator, diff checker, and smart checklist. No login, no uploads.',
+  keywords: 'developer tools, json formatter, jwt decoder, regex tester, cron generator, diff checker, checklist maker, free online tools',
+  authors: [{ name: 'DevTools Suite', url: 'https://devtoolssuite.dev' }],
+  creator: 'DevTools Suite',
+  publisher: 'DevTools Suite',
   openGraph: {
     type: 'website',
     siteName: 'DevTools Suite',
+    locale: 'en_US',
   },
   twitter: {
     card: 'summary_large_image',
     site: '@devtools_suite',
+    creator: '@devtools_suite',
   },
   robots: {
     index: true,
     follow: true,
+    googleBot: {
+      index: true,
+      follow: true,
+      'max-snippet': -1,
+      'max-image-preview': 'large',
+      'max-video-preview': -1,
+    },
   },
 }
 

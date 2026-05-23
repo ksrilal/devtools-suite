@@ -1,7 +1,7 @@
 import type { Metadata } from 'next'
 
 const SITE_URL =
-  process.env['NEXT_PUBLIC_SITE_URL'] ?? 'https://devtools-suite.vercel.app'
+  process.env['NEXT_PUBLIC_SITE_URL'] ?? 'https://devtoolssuite.dev'
 
 interface ToolMetadataOptions {
   title: string
@@ -52,10 +52,17 @@ export function webApplicationLD(opts: {
     applicationCategory: 'DeveloperApplication',
     operatingSystem: 'Any',
     browserRequirements: 'Requires JavaScript',
+    isAccessibleForFree: true,
     offers: {
       '@type': 'Offer',
       price: '0',
       priceCurrency: 'USD',
+      availability: 'https://schema.org/InStock',
+    },
+    publisher: {
+      '@type': 'Organization',
+      name: 'DevTools Suite',
+      url: SITE_URL,
     },
     keywords: opts.keywords?.join(', ') ?? '',
   }

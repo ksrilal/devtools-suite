@@ -21,19 +21,23 @@ import { FAQSection } from '@/components/tools/faq-section'
 import { AdSlot } from '@/components/ui/ad-slot'
 
 export const metadata: Metadata = toolMetadata({
-  title: 'Free Developer Tools Online',
+  title: 'DevTools Suite – Free Online Developer Tools | JSON, JWT, Regex, Checklist & Cron',
   description:
-    'DevTools Suite: free browser-based tools for developers — JSON formatter, cron generator, diff checker, JWT decoder, regex tester, and smart checklist. Zero login, privacy-first.',
+    'Free privacy-first developer tools that run entirely in your browser. JSON formatter & validator, JWT decoder, regex tester, cron expression generator, diff checker, and smart checklist. No login, no uploads, no tracking.',
   path: '/',
   keywords: [
-    'developer tools',
-    'online tools',
-    'json formatter',
-    'cron generator',
-    'diff checker',
+    'developer tools online',
+    'free developer tools',
+    'json formatter online',
     'jwt decoder',
-    'regex tester',
-    'checklist tool',
+    'regex tester online',
+    'cron expression generator',
+    'diff checker online',
+    'online checklist maker',
+    'json validator',
+    'browser developer tools',
+    'privacy first tools',
+    'no login tools',
   ],
 })
 
@@ -148,7 +152,7 @@ const faqs = [
   },
 ]
 
-const siteUrl = process.env['NEXT_PUBLIC_SITE_URL'] ?? 'https://devtools-suite.vercel.app'
+const siteUrl = process.env['NEXT_PUBLIC_SITE_URL'] ?? 'https://devtoolssuite.dev'
 
 export default function HomePage() {
   const appLD = webApplicationLD({

@@ -48,7 +48,7 @@ const faqs = [
   },
 ]
 
-const siteUrl = process.env['NEXT_PUBLIC_SITE_URL'] ?? 'https://devtools-suite.vercel.app'
+const siteUrl = process.env['NEXT_PUBLIC_SITE_URL'] ?? 'https://devtoolssuite.dev'
 
 export default function ChecklistPage() {
   const toolUrl = `${siteUrl}/checklist`
