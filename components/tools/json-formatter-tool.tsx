@@ -105,12 +105,12 @@ export function JSONFormatterTool() {
         description="Prettify, minify, validate and explore JSON with syntax highlighting."
         toolbar={
           <div className="flex items-center gap-2">
-            <label className="text-xs text-muted-foreground">Indent</label>
+            <label htmlFor="json-indent" className="text-xs text-muted-foreground">Indent</label>
             <select
+              id="json-indent"
               value={indent}
               onChange={(e) => setIndent(Number(e.target.value))}
               className="text-xs border rounded px-2 py-1 bg-background focus-visible:outline-none focus-visible:ring-1 focus-visible:ring-ring"
-              aria-label="Indentation size"
             >
               <option value={2}>2 spaces</option>
               <option value={4}>4 spaces</option>

@@ -364,7 +364,7 @@ export function ChecklistTool() {
           )}
 
           {/* Items */}
-          <ul className="space-y-1" role="list" aria-label="Checklist items">
+          <ul className="space-y-1" aria-label="Checklist items">
             {visible.map((item) => (
               <li
                 key={item.id}

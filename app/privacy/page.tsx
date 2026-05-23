@@ -28,11 +28,11 @@ export default function PrivacyPage() {
         <h2>Advertising</h2>
         <p>
           We display ads via Google AdSense. Google may use cookies to serve relevant ads. See
-          Google's privacy policy for details on how ad data is handled.
+          Google&apos;s privacy policy for details on how ad data is handled.
         </p>
         <h2>localStorage</h2>
         <p>
-          Some tools (like the Smart Checklist) save your work to your browser's localStorage.
+          Some tools (like the Smart Checklist) save your work to your browser&apos;s localStorage.
           This data stays on your device and is never transmitted anywhere.
         </p>
         <h2>Contact</h2>

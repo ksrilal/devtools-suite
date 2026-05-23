@@ -54,8 +54,8 @@ describe('transitionState', () => {
 describe('computeProgress', () => {
   it('calculates percentages correctly', () => {
     const items = parseChecklistInput('a\nb\nc\nd')
-    items[0]!.state = 'checked'
-    items[1]!.state = 'checked'
+    if (items[0]) items[0].state = 'checked'
+    if (items[1]) items[1].state = 'checked'
     const p = computeProgress(items)
     expect(p.total).toBe(4)
     expect(p.checked).toBe(2)
@@ -83,7 +83,7 @@ describe('filterItems', () => {
 describe('exportAsPlainText', () => {
   it('includes state prefixes', () => {
     const items = parseChecklistInput('foo\nbar')
-    items[0]!.state = 'checked'
+    if (items[0]) items[0].state = 'checked'
     const text = exportAsPlainText(items)
     expect(text).toContain('[x] foo')
     expect(text).toContain('[ ] bar')
@@ -93,7 +93,7 @@ describe('exportAsPlainText', () => {
 describe('exportAsMarkdown', () => {
   it('formats invalid items with strikethrough', () => {
     const items = parseChecklistInput('broken item')
-    items[0]!.state = 'invalid'
+    if (items[0]) items[0].state = 'invalid'
     const md = exportAsMarkdown(items)
     expect(md).toContain('~~broken item~~')
   })

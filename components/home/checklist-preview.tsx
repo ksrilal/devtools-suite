@@ -72,7 +72,7 @@ export function ChecklistPreviewPanel() {
           <div className="h-full rounded-full bg-green-500 transition-all duration-500 ease-out" style={{ width: `${progress}%` }} />
         </div>
       </div>
-      <ul className="px-3 pb-3 space-y-0.5" role="list">
+      <ul className="px-3 pb-3 space-y-0.5">
         {items.map(item => (
           <li
             key={item.id}

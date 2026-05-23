@@ -213,7 +213,7 @@ export function RegexTesterTool() {
                     <div key={i} className="text-xs font-mono text-muted-foreground">
                       <span className="text-foreground">#{i + 1}</span>{' '}
                       pos {m.index}–{m.index + m.length}:{' '}
-                      <span className="text-yellow-600 dark:text-yellow-400">"{m.value}"</span>
+                      <span className="text-yellow-600 dark:text-yellow-400">&quot;{m.value}&quot;</span>
                       {m.groups && Object.keys(m.groups).length > 0 && (
                         <span className="ml-2 text-blue-500">
                           {JSON.stringify(m.groups)}

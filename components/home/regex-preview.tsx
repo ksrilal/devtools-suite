@@ -71,7 +71,8 @@ export function RegexPreviewPanel() {
     return () => clearTimeout(t)
   }, [stepIndex])
 
-  const step = STEPS[stepIndex] ?? STEPS[0]!
+  const step = STEPS[stepIndex] ?? STEPS[0]
+  if (!step) return null
 
   return (
     <div className="rounded-xl border border-border/60 bg-card overflow-hidden h-full flex flex-col">

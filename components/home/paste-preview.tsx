@@ -51,7 +51,7 @@ function getMarkerColor(line: string): string {
 function getMarkerSpan(line: string) {
   if (line.startsWith('[x]')) return { marker: '[x]', rest: line.slice(3) }
   if (line.startsWith('[ ]')) return { marker: '[ ]', rest: line.slice(3) }
-  if (line.startsWith('✓') || line.startsWith('✗')) return { marker: line[0]!, rest: line.slice(1) }
+  if (line.startsWith('✓') || line.startsWith('✗')) return { marker: line[0] ?? '', rest: line.slice(1) }
   return { marker: null, rest: line }
 }
 
@@ -62,7 +62,8 @@ export function PastePreview() {
   const [charCount, setCharCount] = useState(0)
   const [fading, setFading] = useState(false)
 
-  const demo = DEMOS[demoIndex]!
+  const demo = DEMOS[demoIndex] ?? DEMOS[0]
+  if (!demo) return null
 
   // Single-line demos: type character by character
   // Multi-line demos: reveal line by line

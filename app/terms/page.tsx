@@ -16,7 +16,7 @@ export default function TermsPage() {
         <h2>Use of Service</h2>
         <p>
           DevTools Suite provides free developer tools for personal and professional use. The tools
-          are provided "as is" without warranty of any kind.
+          are provided &quot;as is&quot; without warranty of any kind.
         </p>
         <h2>No Warranties</h2>
         <p>
