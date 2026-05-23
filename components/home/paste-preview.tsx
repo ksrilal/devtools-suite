@@ -63,12 +63,8 @@ export function PastePreview() {
   const [fading, setFading] = useState(false)
 
   const demo = DEMOS[demoIndex] ?? DEMOS[0]
-  if (!demo) return null
-
-  // Single-line demos: type character by character
-  // Multi-line demos: reveal line by line
-  const isMultiLine = demo.lines.length > 1
-  const singleLineText = isMultiLine ? '' : (demo.lines[0] ?? '')
+  const isMultiLine = (demo?.lines.length ?? 0) > 1
+  const singleLineText = isMultiLine ? '' : (demo?.lines[0] ?? '')
 
   useEffect(() => {
     setVisibleLines([])
@@ -78,7 +74,7 @@ export function PastePreview() {
   }, [demoIndex])
 
   useEffect(() => {
-    if (!typing) return
+    if (!typing || !demo) return
 
     if (isMultiLine) {
       if (visibleLines.length < demo.lines.length) {
@@ -87,7 +83,6 @@ export function PastePreview() {
         }, 320)
         return () => clearTimeout(t)
       } else {
-        // All lines revealed — pause then fade out
         const t = setTimeout(() => setFading(true), 1800)
         return () => clearTimeout(t)
       }
@@ -109,6 +104,8 @@ export function PastePreview() {
     }, 400)
     return () => clearTimeout(t)
   }, [fading])
+
+  if (!demo) return null
 
   const displayLines = isMultiLine ? visibleLines : [singleLineText.slice(0, charCount)]
 
