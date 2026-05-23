@@ -1,6 +1,6 @@
 'use client'
 
-import { useState, useCallback, useEffect, useRef } from 'react'
+import { useState, useCallback, useEffect, useRef, Suspense } from 'react'
 import { useSearchParams } from 'next/navigation'
 import {
   parseChecklistInput,
@@ -37,7 +37,7 @@ const TITLE_KEY = 'devtools_checklist_title'
 
 type ExportFormat = 'text' | 'markdown' | 'csv'
 
-export function ChecklistTool() {
+function ChecklistToolInner() {
   const searchParams = useSearchParams()
   const [input, setInput] = useState('')
   const [items, setItems] = useState<ChecklistItem[]>([])
@@ -427,5 +427,13 @@ export function ChecklistTool() {
       )}
 
     </ToolLayout>
+  )
+}
+
+export function ChecklistTool() {
+  return (
+    <Suspense>
+      <ChecklistToolInner />
+    </Suspense>
   )
 }
