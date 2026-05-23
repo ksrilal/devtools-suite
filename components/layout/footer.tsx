@@ -1,5 +1,5 @@
 import Link from 'next/link'
-import { Wrench, Github } from 'lucide-react'
+import { Wrench } from 'lucide-react'
 
 const toolLinks = [
   { href: '/checklist', label: 'Checklist' },
