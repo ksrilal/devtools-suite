@@ -3,6 +3,24 @@
 import { useState, useCallback, useEffect, useRef, Suspense } from 'react'
 import { useSearchParams } from 'next/navigation'
 import {
+  DndContext,
+  closestCenter,
+  PointerSensor,
+  TouchSensor,
+  KeyboardSensor,
+  useSensor,
+  useSensors,
+  type DragEndEvent,
+} from '@dnd-kit/core'
+import {
+  SortableContext,
+  sortableKeyboardCoordinates,
+  useSortable,
+  verticalListSortingStrategy,
+  arrayMove,
+} from '@dnd-kit/sortable'
+import { CSS } from '@dnd-kit/utilities'
+import {
   parseChecklistInput,
   transitionState,
   computeProgress,
@@ -30,7 +48,91 @@ import {
   RotateCcw,
   Pencil,
   Check,
+  GripVertical,
 } from 'lucide-react'
+
+interface SortableItemProps {
+  item: ChecklistItem
+  onToggle: (id: string) => void
+  onDelete: (id: string) => void
+  isFiltered: boolean
+}
+
+function SortableItem({ item, onToggle, onDelete, isFiltered }: SortableItemProps) {
+  const { attributes, listeners, setNodeRef, transform, transition, isDragging } = useSortable({
+    id: item.id,
+    disabled: isFiltered,
+  })
+
+  const style = {
+    transform: CSS.Transform.toString(transform),
+    transition,
+    opacity: isDragging ? 0.5 : 1,
+    zIndex: isDragging ? 10 : undefined,
+  }
+
+  return (
+    <li
+      ref={setNodeRef}
+      style={style}
+      className="flex items-center gap-2 group rounded-lg px-3 py-2 hover:bg-muted/50 transition-colors"
+    >
+      {/* Drag handle — hidden when filtering */}
+      {!isFiltered && (
+        <button
+          {...attributes}
+          {...listeners}
+          aria-label="Drag to reorder"
+          className="opacity-0 group-hover:opacity-100 cursor-grab active:cursor-grabbing p-0.5 rounded text-muted-foreground/40 hover:text-muted-foreground transition-all focus-visible:opacity-100 touch-none shrink-0"
+        >
+          <GripVertical className="h-4 w-4" />
+        </button>
+      )}
+
+      {/* Checkbox */}
+      <button
+        onClick={() => onToggle(item.id)}
+        aria-label={`Toggle ${item.text} — current state: ${item.state}`}
+        className={`flex-shrink-0 w-5 h-5 rounded border-2 flex items-center justify-center transition-colors focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring ${
+          item.state === 'checked'
+            ? 'bg-green-500 border-green-500 text-white'
+            : item.state === 'invalid'
+              ? 'bg-red-500/20 border-red-500 text-red-500'
+              : 'border-input hover:border-primary'
+        }`}
+      >
+        {item.state === 'checked' && (
+          <svg className="w-3 h-3" fill="none" viewBox="0 0 12 12" aria-hidden="true">
+            <path d="M2 6l3 3 5-5" stroke="currentColor" strokeWidth="1.5" strokeLinecap="round" strokeLinejoin="round" />
+          </svg>
+        )}
+        {item.state === 'invalid' && <X className="w-3 h-3" aria-hidden="true" />}
+      </button>
+
+      {/* Text */}
+      <span
+        className={`flex-1 text-sm ${
+          item.state === 'checked'
+            ? 'line-through text-muted-foreground'
+            : item.state === 'invalid'
+              ? 'line-through text-red-500/70'
+              : ''
+        }`}
+      >
+        {item.text}
+      </span>
+
+      {/* Delete */}
+      <button
+        onClick={() => onDelete(item.id)}
+        className="opacity-0 group-hover:opacity-100 p-1 rounded hover:bg-destructive/10 text-muted-foreground hover:text-destructive transition-all focus-visible:opacity-100 shrink-0"
+        aria-label={`Delete ${item.text}`}
+      >
+        <X className="h-3.5 w-3.5" />
+      </button>
+    </li>
+  )
+}
 
 const STORAGE_KEY = 'devtools_checklist_v1'
 const TITLE_KEY = 'devtools_checklist_title'
@@ -39,6 +141,11 @@ type ExportFormat = 'text' | 'markdown' | 'csv'
 
 function ChecklistToolInner() {
   const searchParams = useSearchParams()
+  const sensors = useSensors(
+    useSensor(PointerSensor, { activationConstraint: { distance: 5 } }),
+    useSensor(TouchSensor, { activationConstraint: { delay: 150, tolerance: 5 } }),
+    useSensor(KeyboardSensor, { coordinateGetter: sortableKeyboardCoordinates })
+  )
   const [input, setInput] = useState('')
   const [items, setItems] = useState<ChecklistItem[]>([])
   const [filter, setFilter] = useState('')
@@ -215,8 +322,19 @@ function ChecklistToolInner() {
     [items, title]
   )
 
+  const handleDragEnd = useCallback((event: DragEndEvent) => {
+    const { active, over } = event
+    if (!over || active.id === over.id) return
+    setItems((prev) => {
+      const oldIndex = prev.findIndex((i) => i.id === active.id)
+      const newIndex = prev.findIndex((i) => i.id === over.id)
+      return arrayMove(prev, oldIndex, newIndex)
+    })
+  }, [])
+
   const progress = computeProgress(items)
   const visible = filterItems(items, filter)
+  const isFiltered = filter.trim().length > 0
 
   const sidebar = items.length === 0 ? (
     <div className="sticky top-20 flex flex-col gap-3">
@@ -364,53 +482,21 @@ function ChecklistToolInner() {
           )}
 
           {/* Items */}
-          <ul className="space-y-1" aria-label="Checklist items">
-            {visible.map((item) => (
-              <li
-                key={item.id}
-                className="flex items-center gap-2 group rounded-lg px-3 py-2 hover:bg-muted/50 transition-colors"
-              >
-                <button
-                  onClick={() => handleToggle(item.id)}
-                  aria-label={`Toggle ${item.text} — current state: ${item.state}`}
-                  className={`flex-shrink-0 w-5 h-5 rounded border-2 flex items-center justify-center transition-colors focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring ${
-                    item.state === 'checked'
-                      ? 'bg-green-500 border-green-500 text-white'
-                      : item.state === 'invalid'
-                        ? 'bg-red-500/20 border-red-500 text-red-500'
-                        : 'border-input hover:border-primary'
-                  }`}
-                >
-                  {item.state === 'checked' && (
-                    <svg className="w-3 h-3" fill="none" viewBox="0 0 12 12" aria-hidden="true">
-                      <path d="M2 6l3 3 5-5" stroke="currentColor" strokeWidth="1.5" strokeLinecap="round" strokeLinejoin="round" />
-                    </svg>
-                  )}
-                  {item.state === 'invalid' && (
-                    <X className="w-3 h-3" aria-hidden="true" />
-                  )}
-                </button>
-                <span
-                  className={`flex-1 text-sm ${
-                    item.state === 'checked'
-                      ? 'line-through text-muted-foreground'
-                      : item.state === 'invalid'
-                        ? 'line-through text-red-500/70'
-                        : ''
-                  }`}
-                >
-                  {item.text}
-                </span>
-                <button
-                  onClick={() => handleDelete(item.id)}
-                  className="opacity-0 group-hover:opacity-100 p-1 rounded hover:bg-destructive/10 text-muted-foreground hover:text-destructive transition-all focus-visible:opacity-100"
-                  aria-label={`Delete ${item.text}`}
-                >
-                  <X className="h-3.5 w-3.5" />
-                </button>
-              </li>
-            ))}
-          </ul>
+          <DndContext sensors={sensors} collisionDetection={closestCenter} onDragEnd={handleDragEnd}>
+            <SortableContext items={items.map(i => i.id)} strategy={verticalListSortingStrategy}>
+              <ul className="space-y-1" aria-label="Checklist items">
+                {visible.map((item) => (
+                  <SortableItem
+                    key={item.id}
+                    item={item}
+                    onToggle={handleToggle}
+                    onDelete={handleDelete}
+                    isFiltered={isFiltered}
+                  />
+                ))}
+              </ul>
+            </SortableContext>
+          </DndContext>
 
           {filter && visible.length === 0 && (
             <p className="text-sm text-muted-foreground text-center py-4">No items match your filter.</p>
