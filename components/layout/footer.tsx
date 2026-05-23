@@ -24,16 +24,6 @@ export function Footer() {
             <p className="text-sm text-muted-foreground leading-relaxed max-w-xs">
               Free browser-based tools built for developers. No login, no uploads, no tracking.
             </p>
-            <a
-              href="https://github.com"
-              target="_blank"
-              rel="noopener noreferrer"
-              className="inline-flex items-center gap-1.5 mt-4 text-xs text-muted-foreground hover:text-foreground transition-colors"
-              aria-label="GitHub (opens in new tab)"
-            >
-              <Github className="h-3.5 w-3.5" aria-hidden="true" />
-              Open Source
-            </a>
           </div>
 
           {/* Tools */}
