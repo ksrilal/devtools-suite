@@ -41,11 +41,11 @@ export default function RootLayout({ children }: { children: React.ReactNode }) 
             __html: `(function(){try{var t=localStorage.getItem('devtools_theme');if(t==='light'){document.documentElement.classList.remove('dark')}else if(t==='dark'||!t){if(!t&&window.matchMedia('(prefers-color-scheme: light)').matches){document.documentElement.classList.remove('dark')}else{document.documentElement.classList.add('dark')}}}catch(e){document.documentElement.classList.add('dark')}})()`,
           }}
         />
-        <Script
+        {/* eslint-disable-next-line @next/next/no-sync-scripts */}
+        <script
           async
           src="https://pagead2.googlesyndication.com/pagead/js/adsbygoogle.js?client=ca-pub-6494285872180880"
           crossOrigin="anonymous"
-          strategy="afterInteractive"
         />
       </head>
       <body className={`${inter.variable} font-sans antialiased min-h-screen flex flex-col`}>
