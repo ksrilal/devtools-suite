@@ -1,9 +1,10 @@
 'use client'
 
 import Link from 'next/link'
+import Image from 'next/image'
 import { usePathname } from 'next/navigation'
 import { useTheme } from 'next-themes'
-import { Moon, Sun, Menu, X, Wrench } from 'lucide-react'
+import { Moon, Sun, Menu, X } from 'lucide-react'
 import { useState } from 'react'
 import { cn } from '@/lib/utils'
 
@@ -32,7 +33,7 @@ export function Nav() {
           href="/"
           className="mr-4 flex items-center gap-2 font-semibold shrink-0 hover:opacity-80 transition-opacity"
         >
-          <Wrench className="h-4 w-4" aria-hidden="true" />
+          <Image src="/logo.png" alt="DevTools Suite" width={28} height={28} className="rounded-md" />
           <span className="hidden sm:inline">DevTools Suite</span>
           <span className="sm:hidden">DevTools</span>
         </Link>

@@ -1,5 +1,5 @@
 import Link from 'next/link'
-import { Wrench } from 'lucide-react'
+import Image from 'next/image'
 
 const toolLinks = [
   { href: '/checklist', label: 'Checklist' },
@@ -18,7 +18,7 @@ export function Footer() {
           {/* Brand */}
           <div className="md:col-span-1">
             <Link href="/" className="inline-flex items-center gap-2 font-semibold mb-3 hover:opacity-80 transition-opacity">
-              <Wrench className="h-4 w-4" aria-hidden="true" />
+              <Image src="/logo.png" alt="DevTools Suite" width={20} height={20} className="rounded-sm" />
               <span>DevTools Suite</span>
             </Link>
             <p className="text-sm text-muted-foreground leading-relaxed max-w-xs">

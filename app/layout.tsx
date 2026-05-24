@@ -24,6 +24,7 @@ export const metadata: Metadata = {
     type: 'website',
     siteName: 'DevTools Suite',
     locale: 'en_US',
+    images: [{ url: '/og-image.png', width: 1280, height: 640, alt: 'DevTools Suite' }],
   },
   twitter: {
     card: 'summary_large_image',
