@@ -92,7 +92,7 @@ export function Nav() {
 
       {/* ── Desktop nav ── */}
       <Tooltip.Provider delayDuration={400}>
-        <div className="hidden md:flex items-stretch px-4 lg:px-6">
+        <div className="hidden md:flex items-stretch container">
 
           {/* Logo — vertically centered, left-pinned */}
           <Link
@@ -103,12 +103,12 @@ export function Nav() {
             <span className="text-sm font-semibold">DevTools Suite</span>
           </Link>
 
-          {/* Two-row tool nav — fills remaining space */}
+          {/* Two-row tool nav — fills remaining space, items spread to fill width */}
           <nav className="flex-1 flex flex-col justify-center py-1.5 gap-0.5 min-w-0" aria-label="Main navigation">
-            <div className="flex items-center flex-wrap gap-x-0.5 gap-y-0">
+            <div className="flex items-center justify-between">
               {row1.map((t) => <NavLink key={t.href} t={t} pathname={pathname} />)}
             </div>
-            <div className="flex items-center flex-wrap gap-x-0.5 gap-y-0">
+            <div className="flex items-center justify-between">
               {row2.map((t) => <NavLink key={t.href} t={t} pathname={pathname} />)}
             </div>
           </nav>
