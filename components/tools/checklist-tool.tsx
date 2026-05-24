@@ -50,6 +50,7 @@ import {
   Check,
   GripVertical,
   Plus,
+  Copy,
 } from 'lucide-react'
 
 interface SortableItemProps {
@@ -122,6 +123,15 @@ function SortableItem({ item, onToggle, onDelete, isFiltered }: SortableItemProp
       >
         {item.text}
       </span>
+
+      {/* Copy */}
+      <button
+        onClick={() => void copyToClipboard(item.text)}
+        className="opacity-0 group-hover:opacity-100 p-1 rounded hover:bg-accent text-muted-foreground hover:text-foreground transition-all focus-visible:opacity-100 shrink-0"
+        aria-label={`Copy ${item.text}`}
+      >
+        <Copy className="h-3.5 w-3.5" />
+      </button>
 
       {/* Delete */}
       <button
