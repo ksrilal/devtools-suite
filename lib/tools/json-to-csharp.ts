@@ -10,7 +10,11 @@ function toPascalCase(str: string): string {
 function csharpType(value: unknown, key: string, classes: Map<string, string>, nullable: boolean): string {
   const q = nullable ? '?' : ''
   if (value === null || value === undefined) return 'object?'
-  if (typeof value === 'string') return `string${q}`
+  if (typeof value === 'string') {
+    const GUID_RE = /^[0-9a-f]{8}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{12}$/i
+    if (GUID_RE.test(value)) return `Guid${q}`
+    return `string${q}`
+  }
   if (typeof value === 'boolean') return `bool${q}`
   if (typeof value === 'number') return Number.isInteger(value) ? `int${q}` : `double${q}`
   if (Array.isArray(value)) {
@@ -70,7 +74,7 @@ export function generateCSharpClasses(
   generateCSharpClass(root as Record<string, unknown>, className, classes, nullable)
 
   const ns = namespaceName.trim() || 'MyApp.Models'
-  const usings = `using System.Text.Json.Serialization;\nusing System.Collections.Generic;\n\n`
+  const usings = `using System;\nusing System.Text.Json.Serialization;\nusing System.Collections.Generic;\n\n`
   const nsOpen = `namespace ${ns}\n{\n`
   const nsClose = `}\n`
   const body = Array.from(classes.values())

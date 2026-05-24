@@ -1,7 +1,7 @@
 'use client'
 
 import { useState, useCallback } from 'react'
-import { formatDockerCompose, minifyDockerCompose } from '@/lib/tools/docker-compose-formatter'
+import { formatDockerCompose, minifyDockerCompose, type YamlError } from '@/lib/tools/docker-compose-formatter'
 import { ToolLayout, ToolHeader, ToolSection } from './tool-layout'
 import { Button } from '@/components/ui/button'
 import { CopyButton } from '@/components/ui/copy-button'
@@ -33,7 +33,7 @@ volumes:
 export function DockerComposeFormatterTool() {
   const [input, setInput] = useState('')
   const [output, setOutput] = useState('')
-  const [error, setError] = useState<string | null>(null)
+  const [error, setError] = useState<YamlError | null>(null)
   const [mode, setMode] = useState<'format' | 'minify'>('format')
 
   const run = useCallback(async (src: string, m: 'format' | 'minify') => {
@@ -96,8 +96,21 @@ export function DockerComposeFormatterTool() {
 
         <ToolSection label="Output">
           {error ? (
-            <div className="rounded-md border border-destructive/50 bg-destructive/10 px-3 py-2 text-sm text-destructive" role="alert">
-              {error}
+            <div className="rounded-md border border-destructive/50 bg-destructive/10 px-4 py-3 text-sm space-y-2" role="alert">
+              <div className="flex items-center gap-2">
+                <span className="font-semibold text-destructive">{error.summary}</span>
+                {error.line !== null && (
+                  <span className="text-xs font-mono text-destructive/70 border border-destructive/30 rounded px-1.5 py-0.5">
+                    line {error.line}
+                  </span>
+                )}
+              </div>
+              <p className="text-destructive/80 leading-relaxed">{error.detail}</p>
+              {error.hint && (
+                <div className="rounded-md bg-destructive/10 border border-destructive/20 px-3 py-2 font-mono text-xs text-destructive/90 whitespace-pre-wrap">
+                  {error.hint}
+                </div>
+              )}
             </div>
           ) : output ? (
             <>

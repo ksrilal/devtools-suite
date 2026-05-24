@@ -4,7 +4,7 @@ import { useState, useCallback } from 'react'
 import { ToolLayout, ToolHeader, ToolSection } from './tool-layout'
 import { Button } from '@/components/ui/button'
 import { CopyButton } from '@/components/ui/copy-button'
-import { Check, X, Loader2 } from 'lucide-react'
+import { Check, X, Loader2, RotateCcw } from 'lucide-react'
 
 export function BcryptGeneratorTool() {
   const [password, setPassword] = useState('')
@@ -16,6 +16,18 @@ export function BcryptGeneratorTool() {
   const [verifyHash, setVerifyHash] = useState('')
   const [verifyResult, setVerifyResult] = useState<boolean | null>(null)
   const [verifying, setVerifying] = useState(false)
+
+  const handleResetGenerator = useCallback(() => {
+    setPassword('')
+    setRounds(12)
+    setHash('')
+  }, [])
+
+  const handleResetVerifier = useCallback(() => {
+    setVerifyPassword('')
+    setVerifyHash('')
+    setVerifyResult(null)
+  }, [])
 
   const handleGenerate = useCallback(async () => {
     if (!password) return
@@ -52,7 +64,21 @@ export function BcryptGeneratorTool() {
       <div className="grid lg:grid-cols-2 gap-6">
         {/* Generator */}
         <div className="space-y-4">
-          <ToolSection label="Generate Hash">
+          <ToolSection
+            label="Generate Hash"
+            className="space-y-2"
+          >
+            <div className="flex justify-end -mt-1 mb-1">
+              <Button
+                variant="ghost"
+                size="sm"
+                onClick={handleResetGenerator}
+                disabled={!password && rounds === 12 && !hash}
+                className="h-7 px-2 text-xs"
+              >
+                <RotateCcw className="h-3 w-3 mr-1" />Reset
+              </Button>
+            </div>
             <div className="space-y-3">
               <div>
                 <label className="text-xs font-medium text-muted-foreground mb-1 block" htmlFor="bcrypt-password">
@@ -119,6 +145,17 @@ export function BcryptGeneratorTool() {
 
         {/* Verifier */}
         <ToolSection label="Verify Hash">
+          <div className="flex justify-end -mt-1 mb-1">
+            <Button
+              variant="ghost"
+              size="sm"
+              onClick={handleResetVerifier}
+              disabled={!verifyPassword && !verifyHash && verifyResult === null}
+              className="h-7 px-2 text-xs"
+            >
+              <RotateCcw className="h-3 w-3 mr-1" />Reset
+            </Button>
+          </div>
           <div className="space-y-3">
             <div>
               <label className="text-xs font-medium text-muted-foreground mb-1 block" htmlFor="verify-pw">

@@ -4,7 +4,7 @@ import { useState, useCallback } from 'react'
 import { ToolLayout, ToolHeader, ToolSection } from './tool-layout'
 import { Button } from '@/components/ui/button'
 import { CopyButton } from '@/components/ui/copy-button'
-import { Loader2, Plus, Trash2 } from 'lucide-react'
+import { Loader2, Plus, RotateCcw, Trash2 } from 'lucide-react'
 import { cn } from '@/lib/utils'
 
 type Method = 'GET' | 'POST' | 'PUT' | 'PATCH' | 'DELETE'
@@ -83,16 +83,170 @@ function statusColor(status: number) {
 
 type TabKey = 'params' | 'headers' | 'body'
 
+const DEFAULT_URL = 'https://jsonplaceholder.typicode.com/todos/1'
+const DEFAULT_HEADERS: KVPair[] = [{ key: 'Content-Type', value: 'application/json' }]
+
+interface ParsedCurl {
+  method: Method
+  url: string
+  params: KVPair[]
+  headers: KVPair[]
+  body: string
+}
+
+function parseCurl(raw: string): ParsedCurl | null {
+  // Normalise: collapse line continuations (\\\n, `\\\r\n`, PowerShell backtick)
+  const text = raw
+    .replace(/\\\r?\n\s*/g, ' ')  // bash/cmd line continuation
+    .replace(/`\r?\n\s*/g, ' ')   // PowerShell backtick continuation
+    .trim()
+
+  if (!/^curl\b/i.test(text)) return null
+
+  // Tokenise respecting single-quoted, double-quoted, and unquoted tokens
+  const tokens: string[] = []
+  let i = 0
+  while (i < text.length) {
+    if (text[i] === ' ' || text[i] === '\t') { i++; continue }
+    if (text[i] === "'") {
+      const end = text.indexOf("'", i + 1)
+      if (end === -1) break
+      tokens.push(text.slice(i + 1, end))
+      i = end + 1
+    } else if (text[i] === '"') {
+      let tok = ''
+      i++
+      while (i < text.length && text[i] !== '"') {
+        if (text[i] === '\\' && i + 1 < text.length) { i++; tok += text[i] } else tok += text[i]
+        i++
+      }
+      tokens.push(tok)
+      i++ // closing "
+    } else {
+      let tok = ''
+      while (i < text.length && text[i] !== ' ' && text[i] !== '\t') { tok += text[i]; i++ }
+      tokens.push(tok)
+    }
+  }
+
+  let method: Method = 'GET'
+  let url = ''
+  const headers: KVPair[] = []
+  let body = ''
+
+  let ti = 1 // skip 'curl'
+  while (ti < tokens.length) {
+    const tok = tokens[ti] ?? ''
+    // -X / --request
+    if (tok === '-X' || tok === '--request') {
+      const m = (tokens[ti + 1] ?? '').toUpperCase() as Method
+      if (['GET','POST','PUT','PATCH','DELETE'].includes(m)) method = m
+      ti += 2; continue
+    }
+    // -H / --header
+    if (tok === '-H' || tok === '--header') {
+      const hdr = tokens[ti + 1] ?? ''
+      const colon = hdr.indexOf(':')
+      if (colon !== -1) {
+        headers.push({ key: hdr.slice(0, colon).trim(), value: hdr.slice(colon + 1).trim() })
+      }
+      ti += 2; continue
+    }
+    // -d / --data / --data-raw / --data-binary
+    if (tok === '-d' || tok === '--data' || tok === '--data-raw' || tok === '--data-binary') {
+      body = tokens[ti + 1] ?? ''
+      if (method === 'GET') method = 'POST'
+      ti += 2; continue
+    }
+    // --json (curl 7.82+)
+    if (tok === '--json') {
+      body = tokens[ti + 1] ?? ''
+      method = 'POST'
+      headers.push({ key: 'Content-Type', value: 'application/json' })
+      ti += 2; continue
+    }
+    // --url or bare URL
+    if (tok === '--url') {
+      url = tokens[ti + 1] ?? ''
+      ti += 2; continue
+    }
+    // flags to skip with no value
+    if (['-s','--silent','-S','--show-error','-i','--include',
+         '-v','--verbose','-L','--location','--compressed',
+         '-k','--insecure','-G','--get'].includes(tok)) {
+      ti++; continue
+    }
+    // flags to skip with one value
+    if (['-u','--user','--user-agent','-A','--connect-timeout',
+         '--max-time','-m','-o','--output','-w','--write-out'].includes(tok)) {
+      ti += 2; continue
+    }
+    // bare URL (starts with http or looks like a URL)
+    if (!url && (tok.startsWith('http') || tok.startsWith('/'))) {
+      url = tok; ti++; continue
+    }
+    ti++
+  }
+
+  if (!url) return null
+
+  // Split query string out of URL into params
+  const params: KVPair[] = []
+  try {
+    const parsed = new URL(url)
+    parsed.searchParams.forEach((v, k) => params.push({ key: k, value: v }))
+    url = `${parsed.origin}${parsed.pathname}`
+    // keep hash if present
+    if (parsed.hash) url += parsed.hash
+  } catch {
+    // URL constructor failed — leave url as-is, no params extracted
+  }
+
+  // Pretty-print body if JSON
+  if (body) {
+    try { body = JSON.stringify(JSON.parse(body), null, 2) } catch { /* leave as-is */ }
+  }
+
+  return { method, url, params, headers, body }
+}
+
 export function ApiRequestBuilderTool() {
   const [method, setMethod] = useState<Method>('GET')
-  const [url, setUrl] = useState('https://jsonplaceholder.typicode.com/todos/1')
+  const [url, setUrl] = useState(DEFAULT_URL)
   const [params, setParams] = useState<KVPair[]>([])
-  const [headers, setHeaders] = useState<KVPair[]>([{ key: 'Content-Type', value: 'application/json' }])
+  const [headers, setHeaders] = useState<KVPair[]>(DEFAULT_HEADERS)
   const [body, setBody] = useState('')
   const [tab, setTab] = useState<TabKey>('params')
   const [loading, setLoading] = useState(false)
   const [response, setResponse] = useState<ResponseState | null>(null)
   const [responseTab, setResponseTab] = useState<'body' | 'headers'>('body')
+  const [curlImported, setCurlImported] = useState(false)
+
+  const handlePaste = useCallback((e: React.ClipboardEvent<HTMLInputElement>) => {
+    const pasted = e.clipboardData.getData('text')
+    const parsed = parseCurl(pasted)
+    if (!parsed) return
+    e.preventDefault()
+    setMethod(parsed.method)
+    setUrl(parsed.url)
+    setParams(parsed.params)
+    if (parsed.headers.length > 0) setHeaders(parsed.headers)
+    if (parsed.body) { setBody(parsed.body); setTab('body') }
+    else setTab('params')
+    setResponse(null)
+    setCurlImported(true)
+    setTimeout(() => setCurlImported(false), 3000)
+  }, [])
+
+  const handleReset = useCallback(() => {
+    setMethod('GET')
+    setUrl(DEFAULT_URL)
+    setParams([])
+    setHeaders(DEFAULT_HEADERS)
+    setBody('')
+    setTab('params')
+    setResponse(null)
+  }, [])
 
   const fullUrl = buildUrl(url, params)
   const curl = buildCurl(method, fullUrl, headers, body)
@@ -145,6 +299,11 @@ export function ApiRequestBuilderTool() {
       <ToolHeader
         title="API Request Builder"
         description="Build and send HTTP requests from your browser. Inspect responses, copy cURL commands."
+        toolbar={
+          <Button variant="ghost" size="sm" onClick={handleReset}>
+            <RotateCcw className="h-3.5 w-3.5 mr-1" />Reset
+          </Button>
+        }
       />
 
       {/* URL bar */}
@@ -163,15 +322,23 @@ export function ApiRequestBuilderTool() {
           type="url"
           value={url}
           onChange={(e) => setUrl(e.target.value)}
-          placeholder="https://api.example.com/endpoint"
+          onPaste={handlePaste}
+          placeholder="https://api.example.com/endpoint — or paste a cURL command"
           className="flex-1 rounded-md border border-input bg-background px-3 py-2 text-sm font-mono focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring placeholder:text-muted-foreground"
-          aria-label="Request URL"
+          aria-label="Request URL or cURL command"
           onKeyDown={(e) => { if (e.key === 'Enter') void sendRequest() }}
         />
         <Button onClick={() => void sendRequest()} disabled={!url.trim() || loading}>
           {loading ? <><Loader2 className="h-4 w-4 animate-spin" />Sending</> : 'Send'}
         </Button>
       </div>
+
+      {/* cURL import success banner */}
+      {curlImported && (
+        <div className="mb-3 flex items-center gap-2 rounded-md border border-green-500/30 bg-green-500/10 px-3 py-2 text-xs text-green-600 dark:text-green-400" role="status">
+          <span className="font-medium">cURL imported —</span> method, URL, headers, params, and body populated from your command.
+        </div>
+      )}
 
       {/* Input tabs */}
       <div className="flex gap-0 border-b border-border/50 mb-4">
