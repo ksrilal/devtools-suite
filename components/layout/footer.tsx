@@ -2,37 +2,63 @@ import Link from 'next/link'
 import Image from 'next/image'
 
 const toolLinks = [
-  { href: '/checklist', label: 'Checklist' },
-  { href: '/json-formatter', label: 'JSON Formatter' },
-  { href: '/cron-generator', label: 'Cron Generator' },
-  { href: '/diff-checker', label: 'Diff Checker' },
-  { href: '/jwt-decoder', label: 'JWT Decoder' },
-  { href: '/regex-tester', label: 'Regex Tester' },
+  { href: '/checklist',            label: 'Checklist' },
+  { href: '/json-formatter',       label: 'JSON Formatter' },
+  { href: '/cron-generator',       label: 'Cron Generator' },
+  { href: '/diff-checker',         label: 'Diff Checker' },
+  { href: '/jwt-decoder',          label: 'JWT Decoder' },
+  { href: '/regex-tester',         label: 'Regex Tester' },
   { href: '/base64-encoder-decoder', label: 'Base64 Encoder' },
-  { href: '/uuid-generator', label: 'UUID Generator' },
-  { href: '/url-encoder-decoder', label: 'URL Encoder' },
-  { href: '/markdown-previewer', label: 'Markdown Previewer' },
-  { href: '/sql-formatter', label: 'SQL Formatter' },
-  { href: '/color-converter', label: 'Color Converter' },
-  { href: '/hash-generator', label: 'Hash Generator' },
-  { href: '/yaml-json-converter', label: 'YAML ↔ JSON' },
-  { href: '/json-ts-generator',   label: 'JSON → TypeScript' },
-  { href: '/csv-json-converter',  label: 'CSV ↔ JSON' },
-  { href: '/timestamp-converter', label: 'Timestamp Converter' },
-  { href: '/case-converter',      label: 'Case Converter' },
-  { href: '/password-generator',  label: 'Password Generator' },
-  { href: '/jwt-generator',       label: 'JWT Generator' },
-  { href: '/xml-formatter',       label: 'XML Formatter' },
-  { href: '/qr-code-generator',   label: 'QR Code Generator' },
+  { href: '/uuid-generator',       label: 'UUID Generator' },
+  { href: '/url-encoder-decoder',  label: 'URL Encoder' },
+  { href: '/markdown-previewer',   label: 'Markdown Previewer' },
+  { href: '/sql-formatter',        label: 'SQL Formatter' },
+  { href: '/color-converter',      label: 'Color Converter' },
+  { href: '/hash-generator',       label: 'Hash Generator' },
+  { href: '/yaml-json-converter',  label: 'YAML ↔ JSON' },
+  { href: '/json-ts-generator',    label: 'JSON → TypeScript' },
+  { href: '/csv-json-converter',   label: 'CSV ↔ JSON' },
+  { href: '/timestamp-converter',  label: 'Timestamp Converter' },
+  { href: '/case-converter',       label: 'Case Converter' },
+  { href: '/password-generator',   label: 'Password Generator' },
+  { href: '/jwt-generator',        label: 'JWT Generator' },
+  { href: '/xml-formatter',        label: 'XML Formatter' },
+  { href: '/qr-code-generator',    label: 'QR Code Generator' },
 ]
+
+const COL1 = 8
+const COL2 = 8
+// remaining goes to col3
+
+function ToolColumn({ links, showHeading }: { links: typeof toolLinks; showHeading: boolean }) {
+  return (
+    <div>
+      <p className={`text-xs font-semibold uppercase tracking-wider text-muted-foreground/60 mb-3 ${showHeading ? '' : 'invisible'}`}>
+        Tools
+      </p>
+      <nav className="flex flex-col gap-2">
+        {links.map((t) => (
+          <Link
+            key={t.href}
+            href={t.href}
+            className="text-sm text-muted-foreground hover:text-foreground transition-colors w-fit"
+          >
+            {t.label}
+          </Link>
+        ))}
+      </nav>
+    </div>
+  )
+}
 
 export function Footer() {
   return (
     <footer className="border-t border-border/50 bg-background">
       <div className="container py-10 md:py-12">
-        <div className="grid gap-8 sm:grid-cols-2 md:grid-cols-4">
-          {/* Brand */}
-          <div className="sm:col-span-2 md:col-span-1">
+        {/* Brand + 3 tool columns + Company */}
+        <div className="grid gap-8 grid-cols-2 sm:grid-cols-3 md:grid-cols-5">
+          {/* Brand — full width on mobile, 1 col md+ */}
+          <div className="col-span-2 sm:col-span-3 md:col-span-1">
             <Link href="/" className="inline-flex items-center gap-2 font-semibold mb-3 hover:opacity-80 transition-opacity">
               <Image src="/logo.png" alt="" width={22} height={22} className="rounded-sm object-cover shrink-0" />
               <span>DevTools Suite</span>
@@ -42,39 +68,11 @@ export function Footer() {
             </p>
           </div>
 
-          {/* Tools — first half */}
-          <div>
-            <p className="text-xs font-semibold uppercase tracking-wider text-muted-foreground/60 mb-3">Tools</p>
-            <nav className="flex flex-col gap-2" aria-label="Tool links (first)">
-              {toolLinks.slice(0, 12).map((t) => (
-                <Link
-                  key={t.href}
-                  href={t.href}
-                  className="text-sm text-muted-foreground hover:text-foreground transition-colors w-fit"
-                >
-                  {t.label}
-                </Link>
-              ))}
-            </nav>
-          </div>
+          <ToolColumn links={toolLinks.slice(0, COL1)} showHeading={true} />
+          <ToolColumn links={toolLinks.slice(COL1, COL1 + COL2)} showHeading={false} />
+          <ToolColumn links={toolLinks.slice(COL1 + COL2)} showHeading={false} />
 
-          {/* Tools — second half */}
-          <div>
-            <p className="text-xs font-semibold uppercase tracking-wider text-muted-foreground/60 mb-3 invisible">Tools</p>
-            <nav className="flex flex-col gap-2" aria-label="Tool links (second)">
-              {toolLinks.slice(12).map((t) => (
-                <Link
-                  key={t.href}
-                  href={t.href}
-                  className="text-sm text-muted-foreground hover:text-foreground transition-colors w-fit"
-                >
-                  {t.label}
-                </Link>
-              ))}
-            </nav>
-          </div>
-
-          {/* Legal */}
+          {/* Company */}
           <div>
             <p className="text-xs font-semibold uppercase tracking-wider text-muted-foreground/60 mb-3">Company</p>
             <nav className="flex flex-col gap-2" aria-label="Company links">
