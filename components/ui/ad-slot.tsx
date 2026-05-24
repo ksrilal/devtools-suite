@@ -30,28 +30,32 @@ const isDev = process.env.NODE_ENV === 'development'
 
 export function AdSlot({ variant, className }: AdSlotProps) {
   const insRef = useRef<HTMLModElement>(null)
-  const [filled, setFilled] = useState(false)
+  // null = waiting, true = filled, false = unfilled/timed out
+  const [status, setStatus] = useState<boolean | null>(null)
   const clientId = process.env['NEXT_PUBLIC_ADSENSE_CLIENT_ID']
 
   useEffect(() => {
     if (!clientId || !insRef.current) return
 
-    // Push the ad request
+    // AdSense requires the <ins> to be visible before push — status starts null so
+    // the wrapper renders at full size, then collapses if unfilled.
     try {
       // eslint-disable-next-line @typescript-eslint/no-explicit-any
       ;(window as any).adsbygoogle = (window as any).adsbygoogle || []
       // eslint-disable-next-line @typescript-eslint/no-explicit-any
       ;((window as any).adsbygoogle as unknown[]).push({})
     } catch {
+      setStatus(false)
       return
     }
 
     const ins = insRef.current
 
     const check = (): boolean => {
-      if (ins.getAttribute('data-ad-status') === 'filled') { setFilled(true); return true }
-      if (ins.getAttribute('data-ad-status') === 'unfilled') return true
-      if (ins.querySelector('iframe')) { setFilled(true); return true }
+      const adStatus = ins.getAttribute('data-ad-status')
+      if (adStatus === 'filled') { setStatus(true); return true }
+      if (adStatus === 'unfilled') { setStatus(false); return true }
+      if (ins.querySelector('iframe')) { setStatus(true); return true }
       return false
     }
 
@@ -65,7 +69,8 @@ export function AdSlot({ variant, className }: AdSlotProps) {
       attributeFilter: ['data-ad-status', 'style'],
     })
 
-    const t = setTimeout(() => { observer.disconnect() }, 6000)
+    // After 6s with no status, treat as unfilled
+    const t = setTimeout(() => { observer.disconnect(); setStatus(false) }, 6000)
     return () => { observer.disconnect(); clearTimeout(t) }
   }, [clientId])
 
@@ -87,10 +92,10 @@ export function AdSlot({ variant, className }: AdSlotProps) {
 
   return (
     <div
-      className={filled ? cn(slotDimensions[variant], className) : undefined}
-      style={filled ? undefined : { display: 'none' }}
-      aria-label={filled ? 'Advertisement' : undefined}
-      aria-hidden={!filled || undefined}
+      className={status !== false ? cn(slotDimensions[variant], className) : undefined}
+      style={status === false ? { display: 'none' } : undefined}
+      aria-label={status === true ? 'Advertisement' : undefined}
+      aria-hidden={status !== true || undefined}
     >
       <ins
         ref={insRef}
