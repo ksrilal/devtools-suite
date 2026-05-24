@@ -2,8 +2,8 @@
   "manifest_version": 3,
   "name": "DevTools Suite",
   "short_name": "DevTools",
-  "description": "Free developer tools in your browser — JSON formatter, JWT decoder, regex tester, cron generator, diff checker, and smart checklist.",
-  "version": "1.0.0",
+  "description": "32 free developer tools in your browser — JSON, JWT, regex, cron, diff, Base64, UUID, YAML, bcrypt, QR code, API builder, and more.",
+  "version": "1.1.0",
   "action": {
     "default_popup": "popup.html",
     "default_icon": {
