@@ -49,6 +49,7 @@ import {
   Pencil,
   Check,
   GripVertical,
+  Plus,
 } from 'lucide-react'
 
 interface SortableItemProps {
@@ -322,6 +323,17 @@ function ChecklistToolInner() {
     [items, title]
   )
 
+  const [newItemText, setNewItemText] = useState('')
+  const newItemRef = useRef<HTMLInputElement>(null)
+
+  const handleAddItem = useCallback(() => {
+    const text = newItemText.trim()
+    if (!text) return
+    setItems((prev) => [...prev, { id: `item-${Date.now()}`, text, state: 'unchecked' }])
+    setNewItemText('')
+    newItemRef.current?.focus()
+  }, [newItemText])
+
   const handleDragEnd = useCallback((event: DragEndEvent) => {
     const { active, over } = event
     if (!over || active.id === over.id) return
@@ -502,8 +514,26 @@ function ChecklistToolInner() {
             <p className="text-sm text-muted-foreground text-center py-4">No items match your filter.</p>
           )}
 
+          {/* Add item */}
+          <div className="flex gap-2 pt-2 border-t">
+            <input
+              ref={newItemRef}
+              type="text"
+              value={newItemText}
+              onChange={(e) => setNewItemText(e.target.value)}
+              onKeyDown={(e) => { if (e.key === 'Enter') handleAddItem() }}
+              placeholder="Add an item..."
+              aria-label="Add new checklist item"
+              className="flex-1 rounded-md border border-input bg-background px-3 py-1.5 text-sm focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring placeholder:text-muted-foreground"
+            />
+            <Button size="sm" onClick={handleAddItem} disabled={!newItemText.trim()}>
+              <Plus className="h-3.5 w-3.5 mr-1" />
+              Add
+            </Button>
+          </div>
+
           {/* Reset to input */}
-          <div className="pt-2 border-t">
+          <div>
             <Button variant="ghost" size="sm" onClick={() => { setItems([]); setInput('') }}>
               <RotateCcw className="h-3.5 w-3.5 mr-1" />
               Start over
