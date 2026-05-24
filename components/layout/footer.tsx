@@ -16,6 +16,14 @@ const toolLinks = [
   { href: '/color-converter', label: 'Color Converter' },
   { href: '/hash-generator', label: 'Hash Generator' },
   { href: '/yaml-json-converter', label: 'YAML ↔ JSON' },
+  { href: '/json-ts-generator',   label: 'JSON → TypeScript' },
+  { href: '/csv-json-converter',  label: 'CSV ↔ JSON' },
+  { href: '/timestamp-converter', label: 'Timestamp Converter' },
+  { href: '/case-converter',      label: 'Case Converter' },
+  { href: '/password-generator',  label: 'Password Generator' },
+  { href: '/jwt-generator',       label: 'JWT Generator' },
+  { href: '/xml-formatter',       label: 'XML Formatter' },
+  { href: '/qr-code-generator',   label: 'QR Code Generator' },
 ]
 
 export function Footer() {
@@ -38,7 +46,7 @@ export function Footer() {
           <div>
             <p className="text-xs font-semibold uppercase tracking-wider text-muted-foreground/60 mb-3">Tools</p>
             <nav className="flex flex-col gap-2" aria-label="Tool links (first)">
-              {toolLinks.slice(0, 7).map((t) => (
+              {toolLinks.slice(0, 12).map((t) => (
                 <Link
                   key={t.href}
                   href={t.href}
@@ -54,7 +62,7 @@ export function Footer() {
           <div>
             <p className="text-xs font-semibold uppercase tracking-wider text-muted-foreground/60 mb-3 invisible">Tools</p>
             <nav className="flex flex-col gap-2" aria-label="Tool links (second)">
-              {toolLinks.slice(7).map((t) => (
+              {toolLinks.slice(12).map((t) => (
                 <Link
                   key={t.href}
                   href={t.href}

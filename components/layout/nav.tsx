@@ -24,6 +24,14 @@ const tools = [
   { href: '/color-converter',      label: 'Color',     title: 'Color Converter' },
   { href: '/hash-generator',       label: 'Hash',      title: 'Hash Generator' },
   { href: '/yaml-json-converter',  label: 'YAML',      title: 'YAML ↔ JSON Converter' },
+  { href: '/json-ts-generator',    label: 'TS Gen',    title: 'JSON → TypeScript Generator' },
+  { href: '/csv-json-converter',   label: 'CSV',       title: 'CSV ↔ JSON Converter' },
+  { href: '/timestamp-converter',  label: 'Timestamp', title: 'Unix Timestamp Converter' },
+  { href: '/case-converter',       label: 'Case',      title: 'Case Converter' },
+  { href: '/password-generator',   label: 'Password',  title: 'Password Generator' },
+  { href: '/jwt-generator',        label: 'JWT Gen',   title: 'JWT Generator' },
+  { href: '/xml-formatter',        label: 'XML',       title: 'XML Formatter' },
+  { href: '/qr-code-generator',    label: 'QR Code',   title: 'QR Code Generator' },
 ]
 
 export function Nav() {
