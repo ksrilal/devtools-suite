@@ -5,85 +5,115 @@
 }
 
 html, body {
-  width: 900px;
-  height: 600px;
+  width: 860px;
+  height: 580px;
   overflow: hidden;
+  display: flex;
   font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif;
   background: #09090b;
   color: #fafafa;
 }
 
-header {
+/* ── Sidebar ── */
+.sidebar {
+  width: 68px;
+  height: 100%;
   display: flex;
+  flex-direction: column;
   align-items: center;
-  gap: 7px;
-  padding: 8px 12px;
-  border-bottom: 1px solid rgba(255,255,255,0.08);
-  background: #09090b;
+  background: #111113;
+  border-right: 1px solid rgba(255,255,255,0.07);
+  padding: 12px 0;
   flex-shrink: 0;
+  gap: 4px;
 }
 
-.brand {
-  font-size: 13px;
-  font-weight: 600;
-  flex: 1;
+.logo {
+  margin-bottom: 8px;
+  padding: 4px;
 }
 
-.open-tab {
-  color: rgba(255,255,255,0.4);
-  text-decoration: none;
-  display: flex;
-  align-items: center;
-  padding: 2px;
-  border-radius: 4px;
-  transition: color 0.15s;
+.logo img {
+  border-radius: 8px;
+  display: block;
 }
 
-.open-tab:hover {
-  color: rgba(255,255,255,0.8);
-}
-
+/* ── Nav tabs ── */
 nav {
   display: flex;
+  flex-direction: column;
+  align-items: center;
   gap: 2px;
-  padding: 6px 8px;
-  border-bottom: 1px solid rgba(255,255,255,0.08);
-  background: #09090b;
-  flex-shrink: 0;
-  overflow-x: auto;
-  scrollbar-width: none;
+  flex: 1;
+  width: 100%;
+  padding: 0 6px;
 }
 
-nav::-webkit-scrollbar { display: none; }
-
 .tab {
+  width: 100%;
   background: none;
   border: none;
-  color: rgba(255,255,255,0.5);
-  font-size: 12px;
-  padding: 4px 10px;
-  border-radius: 5px;
+  color: rgba(255,255,255,0.4);
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 4px;
+  padding: 8px 4px;
+  border-radius: 8px;
   cursor: pointer;
-  white-space: nowrap;
   transition: background 0.15s, color 0.15s;
+}
+
+.tab svg {
+  width: 18px;
+  height: 18px;
+  flex-shrink: 0;
+}
+
+.tab span {
+  font-size: 9px;
+  font-weight: 500;
+  letter-spacing: 0.02em;
 }
 
 .tab:hover {
   background: rgba(255,255,255,0.07);
-  color: rgba(255,255,255,0.85);
+  color: rgba(255,255,255,0.8);
 }
 
 .tab.active {
   background: rgba(255,255,255,0.1);
   color: #fff;
-  font-weight: 500;
 }
 
+/* ── Open in tab link ── */
+.open-tab {
+  color: rgba(255,255,255,0.25);
+  text-decoration: none;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  padding: 8px;
+  border-radius: 8px;
+  margin-top: 4px;
+  transition: color 0.15s, background 0.15s;
+}
+
+.open-tab svg {
+  width: 14px;
+  height: 14px;
+}
+
+.open-tab:hover {
+  color: rgba(255,255,255,0.7);
+  background: rgba(255,255,255,0.07);
+}
+
+/* ── iframe ── */
 .frame-wrap {
   flex: 1;
   overflow: hidden;
-  display: flex;
-  height: calc(600px - 36px - 42px);
+  position: relative;
 }
 
 iframe {

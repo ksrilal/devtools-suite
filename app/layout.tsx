@@ -54,7 +54,7 @@ export default function RootLayout({ children }: { children: React.ReactNode }) 
       <head>
         <script
           dangerouslySetInnerHTML={{
-            __html: `(function(){try{var t=localStorage.getItem('devtools_theme');if(t==='light'){document.documentElement.classList.remove('dark')}else if(t==='dark'||!t){if(!t&&window.matchMedia('(prefers-color-scheme: light)').matches){document.documentElement.classList.remove('dark')}else{document.documentElement.classList.add('dark')}}}catch(e){document.documentElement.classList.add('dark')}})()`,
+            __html: `(function(){try{var t=localStorage.getItem('devtools_theme');if(t==='light'){document.documentElement.classList.remove('dark')}else if(t==='dark'||!t){if(!t&&window.matchMedia('(prefers-color-scheme: light)').matches){document.documentElement.classList.remove('dark')}else{document.documentElement.classList.add('dark')}}}catch(e){document.documentElement.classList.add('dark')}})();(function(){if(new URLSearchParams(location.search).get('embed')==='1')document.documentElement.setAttribute('data-embed','1')})()`,
           }}
         />
         {/* eslint-disable-next-line @next/next/no-sync-scripts */}

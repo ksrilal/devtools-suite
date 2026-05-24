@@ -67,3 +67,19 @@
     display: block !important;
   }
 }
+
+/* Chrome extension embed mode — hide chrome around the tool */
+[data-embed='1'] header,
+[data-embed='1'] footer,
+[data-embed='1'] [aria-hidden='true'][class*='adsbygoogle'],
+[data-embed='1'] .ad-slot-wrapper {
+  display: none !important;
+}
+
+[data-embed='1'] body {
+  min-height: unset;
+}
+
+[data-embed='1'] main {
+  padding-top: 0;
+}
