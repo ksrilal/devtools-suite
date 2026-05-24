@@ -10,8 +10,8 @@
 
 <!-- Upload devToolsSuite.mp4 by dragging it into any GitHub issue comment box,
      copy the resulting URL (https://github.com/user-attachments/assets/…),
-     then replace the line below with that URL -->
-https://github.com/user-attachments/assets/REPLACE_WITH_UPLOADED_VIDEO_URL
+     then replace the line below with that URL https://github.com/user-attachments/assets/ce40bfe3-260f-47ec-b867-24a3e925c47f -->
+https://github.com/user-attachments/assets/ce40bfe3-260f-47ec-b867-24a3e925c47f
 
 ---
 
