@@ -56,10 +56,10 @@ function NavLink({ t, pathname }: { t: typeof tools[number]; pathname: string })
         <Link
           href={t.href}
           className={cn(
-            'px-2.5 py-1 text-[13px] rounded-md transition-colors whitespace-nowrap leading-none',
+            'px-2.5 py-1 rounded-md transition-all whitespace-nowrap leading-none',
             pathname === t.href
-              ? 'bg-accent text-accent-foreground font-medium'
-              : 'text-muted-foreground hover:text-foreground hover:bg-accent/60'
+              ? 'bg-accent text-accent-foreground text-sm font-semibold'
+              : 'text-[13px] text-muted-foreground hover:text-foreground hover:bg-accent/60'
           )}
         >
           {t.label}
@@ -103,13 +103,25 @@ export function Nav() {
             <span className="text-sm font-semibold">DevTools Suite</span>
           </Link>
 
-          {/* Two-row tool nav — fills remaining space, items spread to fill width */}
+          {/* Active tool — vertically centered like the logo, shown only when a tool is active */}
+          {tools.some((t) => t.href === pathname) && (() => {
+            const active = tools.find((t) => t.href === pathname)!
+            return (
+              <div className="flex items-center pr-3 mr-1 border-r border-border/40 shrink-0">
+                <span className="text-sm font-semibold text-foreground bg-accent px-2.5 py-1 rounded-md whitespace-nowrap">
+                  {active.label}
+                </span>
+              </div>
+            )
+          })()}
+
+          {/* Two-row tool nav — inactive items only */}
           <nav className="flex-1 flex flex-col justify-center py-1.5 gap-0.5 min-w-0" aria-label="Main navigation">
             <div className="flex items-center justify-between">
-              {row1.map((t) => <NavLink key={t.href} t={t} pathname={pathname} />)}
+              {row1.filter((t) => t.href !== pathname).map((t) => <NavLink key={t.href} t={t} pathname={pathname} />)}
             </div>
             <div className="flex items-center justify-between">
-              {row2.map((t) => <NavLink key={t.href} t={t} pathname={pathname} />)}
+              {row2.filter((t) => t.href !== pathname).map((t) => <NavLink key={t.href} t={t} pathname={pathname} />)}
             </div>
           </nav>
 
