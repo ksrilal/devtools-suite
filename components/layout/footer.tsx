@@ -24,10 +24,20 @@ const toolLinks = [
   { href: '/jwt-generator',        label: 'JWT Generator' },
   { href: '/xml-formatter',        label: 'XML Formatter' },
   { href: '/qr-code-generator',    label: 'QR Code Generator' },
+  { href: '/json-zod-generator',   label: 'JSON → Zod Schema' },
+  { href: '/flexbox-playground',   label: 'Flexbox Playground' },
+  { href: '/api-request-builder',  label: 'API Request Builder' },
+  { href: '/json-schema-generator',label: 'JSON Schema Generator' },
+  { href: '/bcrypt-generator',     label: 'Bcrypt Generator' },
+  { href: '/openapi-viewer',       label: 'OpenAPI Viewer' },
+  { href: '/tailwind-playground',  label: 'Tailwind Playground' },
+  { href: '/json-to-dart',         label: 'JSON → Dart' },
+  { href: '/json-to-csharp',       label: 'JSON → C#' },
+  { href: '/docker-compose-formatter', label: 'Docker Compose Formatter' },
 ]
 
-const COL1 = 8
-const COL2 = 8
+const COL1 = 11
+const COL2 = 11
 // remaining goes to col3
 
 function ToolColumn({ links, showHeading }: { links: typeof toolLinks; showHeading: boolean }) {

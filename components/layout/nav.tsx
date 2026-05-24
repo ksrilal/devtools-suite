@@ -32,6 +32,16 @@ const tools = [
   { href: '/jwt-generator',          label: 'JWT Gen',    title: 'JWT Generator' },
   { href: '/xml-formatter',          label: 'XML',        title: 'XML Formatter' },
   { href: '/qr-code-generator',      label: 'QR Code',    title: 'QR Code Generator' },
+  { href: '/json-zod-generator',     label: 'Zod',        title: 'JSON → Zod Schema Generator' },
+  { href: '/flexbox-playground',     label: 'Flexbox',    title: 'Flexbox Playground' },
+  { href: '/api-request-builder',    label: 'API',        title: 'API Request Builder' },
+  { href: '/json-schema-generator',  label: 'JSON Schema',title: 'JSON Schema Generator' },
+  { href: '/bcrypt-generator',       label: 'Bcrypt',     title: 'Bcrypt Generator' },
+  { href: '/openapi-viewer',         label: 'OpenAPI',    title: 'OpenAPI Viewer' },
+  { href: '/tailwind-playground',    label: 'Tailwind',   title: 'Tailwind Playground' },
+  { href: '/json-to-dart',           label: 'Dart',       title: 'JSON → Dart Models' },
+  { href: '/json-to-csharp',         label: 'C#',         title: 'JSON → C# Classes' },
+  { href: '/docker-compose-formatter', label: 'Docker',   title: 'Docker Compose Formatter' },
 ]
 
 // Split evenly; Phase 4 additions will auto-distribute
