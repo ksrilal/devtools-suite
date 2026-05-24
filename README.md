@@ -19,6 +19,36 @@
 
 ---
 
+## How It Was Built
+
+This project was designed and built using **[SpecKit](https://github.com/speckit-dev/speckit)** — an AI-assisted software specification and implementation workflow that runs inside Claude Code.
+
+### Workflow
+
+```
+/speckit-specify → /speckit-plan → /speckit-tasks → /speckit-implement
+```
+
+1. **`/speckit-specify`** — Translated a plain-English product brief into a structured feature spec: user stories, acceptance criteria, success metrics, and edge cases.
+2. **`/speckit-plan`** — Generated the full technical implementation plan: folder structure, component architecture, SEO strategy, shared utilities, and monetisation approach.
+3. **`/speckit-tasks`** — Broke the plan into a prioritised task list organised by user story, with parallelism markers and file-level granularity.
+4. **`/speckit-implement`** — Executed every task in sequence, writing production code file-by-file, respecting dependencies between phases.
+
+All specs live in [`specs/001-devtools-suite-platform/`](specs/001-devtools-suite-platform/).
+
+### Key Technical Decisions
+
+| Decision | Rationale |
+|---|---|
+| Next.js App Router + SSG | SEO-indexable static HTML per tool page, Lighthouse 95+ |
+| Zero backend | Privacy guarantee — no server ever receives user data |
+| `localStorage` only | Persistence without accounts or databases |
+| `display:none` AdSlot collapse | Keeps `<ins>` in DOM for AdSense while hiding unfilled slots |
+| dnd-kit for drag-and-drop | Accessible, pointer + touch + keyboard sensor support |
+| Plain `<script>` in `<head>` for AdSense | `next/script strategy="afterInteractive"` moves to body, breaking AdSense crawler verification |
+
+---
+
 ## Philosophy
 
 - **Privacy first** — all processing happens locally in your browser. Your data never leaves your device.
