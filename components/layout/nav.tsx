@@ -33,7 +33,9 @@ export function Nav() {
           href="/"
           className="mr-4 flex items-center gap-2 font-semibold shrink-0 hover:opacity-80 transition-opacity"
         >
-          <Image src="/logo.png" alt="DevTools Suite" width={120} height={40} className="object-contain dark:brightness-0 dark:invert" style={{ height: '32px', width: 'auto' }} />
+          <Image src="/logo.png" alt="" width={28} height={28} className="rounded-md object-cover shrink-0" />
+          <span className="hidden sm:inline">DevTools Suite</span>
+          <span className="sm:hidden">DevTools</span>
         </Link>
 
         <nav className="hidden md:flex items-center gap-0.5 flex-1" aria-label="Main navigation">
