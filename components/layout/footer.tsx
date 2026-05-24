@@ -18,8 +18,7 @@ export function Footer() {
           {/* Brand */}
           <div className="md:col-span-1">
             <Link href="/" className="inline-flex items-center gap-2 font-semibold mb-3 hover:opacity-80 transition-opacity">
-              <Image src="/logo.png" alt="DevTools Suite" width={20} height={20} className="rounded-sm" />
-              <span>DevTools Suite</span>
+              <Image src="/logo.png" alt="DevTools Suite" width={100} height={32} className="object-contain dark:brightness-0 dark:invert" style={{ height: '24px', width: 'auto' }} />
             </Link>
             <p className="text-sm text-muted-foreground leading-relaxed max-w-xs">
               Free browser-based tools built for developers. No login, no uploads, no tracking.
