@@ -104,8 +104,9 @@ export function Nav() {
           </Link>
 
           {/* Active tool — vertically centered like the logo, shown only when a tool is active */}
-          {tools.some((t) => t.href === pathname) && (() => {
-            const active = tools.find((t) => t.href === pathname)!
+          {(() => {
+            const active = tools.find((t) => t.href === pathname)
+            if (!active) return null
             return (
               <div className="flex items-center pr-3 mr-1 border-r border-border/40 shrink-0">
                 <span className="text-sm font-semibold text-foreground bg-accent px-2.5 py-1 rounded-md whitespace-nowrap">
