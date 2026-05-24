@@ -6,6 +6,27 @@
 
 ---
 
+## Demo
+
+<!-- Upload devToolsSuite.mp4 by dragging it into any GitHub issue comment box,
+     copy the resulting URL (https://github.com/user-attachments/assets/…),
+     then replace the line below with that URL -->
+https://github.com/user-attachments/assets/REPLACE_WITH_UPLOADED_VIDEO_URL
+
+---
+
+## Screenshots
+
+| | |
+|---|---|
+| ![Home](docs/home.png) | ![Tools](docs/tools.png) |
+| ![Smart Checklist](docs/check.png) | ![Checklist in use](docs/checkd.png) |
+| ![JSON Formatter](docs/json.png) | ![Cron Generator](docs/cron.png) |
+| ![Diff Checker](docs/diff.png) | ![JWT Decoder](docs/jwt.png) |
+| ![Regex Tester](docs/regex.png) | |
+
+---
+
 ## Tools
 
 | Tool | Description |
