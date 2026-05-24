@@ -15,6 +15,14 @@ const tools = [
   { href: '/diff-checker', label: 'Diff' },
   { href: '/jwt-decoder', label: 'JWT' },
   { href: '/regex-tester', label: 'Regex' },
+  { href: '/base64-encoder-decoder', label: 'Base64' },
+  { href: '/uuid-generator', label: 'UUID' },
+  { href: '/url-encoder-decoder', label: 'URL' },
+  { href: '/markdown-previewer', label: 'Markdown' },
+  { href: '/sql-formatter', label: 'SQL' },
+  { href: '/color-converter', label: 'Color' },
+  { href: '/hash-generator', label: 'Hash' },
+  { href: '/yaml-json-converter', label: 'YAML' },
 ]
 
 export function Nav() {

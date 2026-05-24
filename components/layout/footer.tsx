@@ -8,6 +8,14 @@ const toolLinks = [
   { href: '/diff-checker', label: 'Diff Checker' },
   { href: '/jwt-decoder', label: 'JWT Decoder' },
   { href: '/regex-tester', label: 'Regex Tester' },
+  { href: '/base64-encoder-decoder', label: 'Base64 Encoder' },
+  { href: '/uuid-generator', label: 'UUID Generator' },
+  { href: '/url-encoder-decoder', label: 'URL Encoder' },
+  { href: '/markdown-previewer', label: 'Markdown Previewer' },
+  { href: '/sql-formatter', label: 'SQL Formatter' },
+  { href: '/color-converter', label: 'Color Converter' },
+  { href: '/hash-generator', label: 'Hash Generator' },
+  { href: '/yaml-json-converter', label: 'YAML ↔ JSON' },
 ]
 
 export function Footer() {
