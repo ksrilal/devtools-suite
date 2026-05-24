@@ -6,23 +6,24 @@ import { usePathname } from 'next/navigation'
 import { useTheme } from 'next-themes'
 import { Moon, Sun, Menu, X } from 'lucide-react'
 import { useState } from 'react'
+import * as Tooltip from '@radix-ui/react-tooltip'
 import { cn } from '@/lib/utils'
 
 const tools = [
-  { href: '/checklist', label: 'Checklist' },
-  { href: '/json-formatter', label: 'JSON' },
-  { href: '/cron-generator', label: 'Cron' },
-  { href: '/diff-checker', label: 'Diff' },
-  { href: '/jwt-decoder', label: 'JWT' },
-  { href: '/regex-tester', label: 'Regex' },
-  { href: '/base64-encoder-decoder', label: 'Base64' },
-  { href: '/uuid-generator', label: 'UUID' },
-  { href: '/url-encoder-decoder', label: 'URL' },
-  { href: '/markdown-previewer', label: 'Markdown' },
-  { href: '/sql-formatter', label: 'SQL' },
-  { href: '/color-converter', label: 'Color' },
-  { href: '/hash-generator', label: 'Hash' },
-  { href: '/yaml-json-converter', label: 'YAML' },
+  { href: '/checklist',            label: 'Checklist', title: 'Smart Checklist' },
+  { href: '/json-formatter',       label: 'JSON',      title: 'JSON Formatter' },
+  { href: '/cron-generator',       label: 'Cron',      title: 'Cron Generator' },
+  { href: '/diff-checker',         label: 'Diff',      title: 'Diff Checker' },
+  { href: '/jwt-decoder',          label: 'JWT',       title: 'JWT Decoder' },
+  { href: '/regex-tester',         label: 'Regex',     title: 'Regex Tester' },
+  { href: '/base64-encoder-decoder', label: 'Base64',  title: 'Base64 Encoder / Decoder' },
+  { href: '/uuid-generator',       label: 'UUID',      title: 'UUID Generator' },
+  { href: '/url-encoder-decoder',  label: 'URL',       title: 'URL Encoder / Decoder' },
+  { href: '/markdown-previewer',   label: 'Markdown',  title: 'Markdown Previewer' },
+  { href: '/sql-formatter',        label: 'SQL',       title: 'SQL Formatter' },
+  { href: '/color-converter',      label: 'Color',     title: 'Color Converter' },
+  { href: '/hash-generator',       label: 'Hash',      title: 'Hash Generator' },
+  { href: '/yaml-json-converter',  label: 'YAML',      title: 'YAML ↔ JSON Converter' },
 ]
 
 export function Nav() {
@@ -46,22 +47,36 @@ export function Nav() {
           <span className="sm:hidden">DevTools</span>
         </Link>
 
-        <nav className="hidden md:flex items-center gap-0.5 flex-1" aria-label="Main navigation">
-          {tools.map((t) => (
-            <Link
-              key={t.href}
-              href={t.href}
-              className={cn(
-                'px-3 py-1.5 text-sm rounded-md transition-colors',
-                pathname === t.href
-                  ? 'bg-accent text-accent-foreground font-medium'
-                  : 'text-muted-foreground hover:text-foreground hover:bg-accent/60'
-              )}
-            >
-              {t.label}
-            </Link>
-          ))}
-        </nav>
+        <Tooltip.Provider delayDuration={400}>
+          <nav className="hidden md:flex items-center gap-0.5 flex-1" aria-label="Main navigation">
+            {tools.map((t) => (
+              <Tooltip.Root key={t.href}>
+                <Tooltip.Trigger asChild>
+                  <Link
+                    href={t.href}
+                    className={cn(
+                      'px-3 py-1.5 text-sm rounded-md transition-colors',
+                      pathname === t.href
+                        ? 'bg-accent text-accent-foreground font-medium'
+                        : 'text-muted-foreground hover:text-foreground hover:bg-accent/60'
+                    )}
+                  >
+                    {t.label}
+                  </Link>
+                </Tooltip.Trigger>
+                <Tooltip.Portal>
+                  <Tooltip.Content
+                    sideOffset={6}
+                    className="z-50 rounded-md bg-foreground px-2.5 py-1 text-xs font-medium text-background shadow-md animate-in fade-in-0 zoom-in-95 data-[state=closed]:animate-out data-[state=closed]:fade-out-0 data-[state=closed]:zoom-out-95"
+                  >
+                    {t.title}
+                    <Tooltip.Arrow className="fill-foreground" />
+                  </Tooltip.Content>
+                </Tooltip.Portal>
+              </Tooltip.Root>
+            ))}
+          </nav>
+        </Tooltip.Provider>
 
         <div className="flex items-center gap-1 ml-auto">
           <button

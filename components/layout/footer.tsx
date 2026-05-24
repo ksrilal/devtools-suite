@@ -22,9 +22,9 @@ export function Footer() {
   return (
     <footer className="border-t border-border/50 bg-background">
       <div className="container py-10 md:py-12">
-        <div className="grid gap-8 sm:grid-cols-2 md:grid-cols-3">
+        <div className="grid gap-8 sm:grid-cols-2 md:grid-cols-4">
           {/* Brand */}
-          <div className="md:col-span-1">
+          <div className="sm:col-span-2 md:col-span-1">
             <Link href="/" className="inline-flex items-center gap-2 font-semibold mb-3 hover:opacity-80 transition-opacity">
               <Image src="/logo.png" alt="" width={22} height={22} className="rounded-sm object-cover shrink-0" />
               <span>DevTools Suite</span>
@@ -34,11 +34,27 @@ export function Footer() {
             </p>
           </div>
 
-          {/* Tools */}
+          {/* Tools — first half */}
           <div>
             <p className="text-xs font-semibold uppercase tracking-wider text-muted-foreground/60 mb-3">Tools</p>
-            <nav className="flex flex-col gap-2" aria-label="Tool links">
-              {toolLinks.map((t) => (
+            <nav className="flex flex-col gap-2" aria-label="Tool links (first)">
+              {toolLinks.slice(0, 7).map((t) => (
+                <Link
+                  key={t.href}
+                  href={t.href}
+                  className="text-sm text-muted-foreground hover:text-foreground transition-colors w-fit"
+                >
+                  {t.label}
+                </Link>
+              ))}
+            </nav>
+          </div>
+
+          {/* Tools — second half */}
+          <div>
+            <p className="text-xs font-semibold uppercase tracking-wider text-muted-foreground/60 mb-3 invisible">Tools</p>
+            <nav className="flex flex-col gap-2" aria-label="Tool links (second)">
+              {toolLinks.slice(7).map((t) => (
                 <Link
                   key={t.href}
                   href={t.href}
