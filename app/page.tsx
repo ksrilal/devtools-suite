@@ -78,8 +78,9 @@ const tools = [
     icon: CheckSquare,
     name: 'Smart Checklist',
     description:
-      'Two modes in one tool. Simple mode converts any flat list instantly. Advanced mode gives you a 3-level hierarchy with nested drag-and-drop, collapse/expand, per-parent progress tracking, and shareable URLs.',
-    tags: ['release checklist', 'QA checklist', 'nested checklist'],
+      'Plan releases, deployments, migrations, and QA workflows with a powerful nested checklist system built for developers.',
+    secondary: 'Supports nested tasks, progress tracking, drag-and-drop organization, and shareable checklists.',
+    tags: ['release workflows', 'QA tracking', 'nested checklists'],
     featured: true,
   },
   {
@@ -487,18 +488,18 @@ export default function HomePage() {
           {featuredTool && (
             <Link
               href={featuredTool.href}
-              className="group relative sm:col-span-2 lg:col-span-2 rounded-xl border border-border/60 bg-card p-6 md:p-8 transition-all duration-300 hover:border-foreground/20 hover:-translate-y-0.5 motion-safe:hover:-translate-y-0.5 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring overflow-hidden"
+              className="group relative sm:col-span-2 lg:col-span-2 rounded-xl border border-green-500/20 bg-card p-6 md:p-8 transition-all duration-300 hover:border-green-500/40 hover:-translate-y-0.5 motion-safe:hover:-translate-y-0.5 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring overflow-hidden"
             >
-              {/* Subtle inner glow */}
-              <div className="pointer-events-none absolute inset-0 rounded-xl bg-gradient-to-br from-primary/5 via-transparent to-transparent opacity-0 group-hover:opacity-100 transition-opacity duration-300" aria-hidden="true" />
+              {/* Subtle green glow on hover */}
+              <div className="pointer-events-none absolute inset-0 rounded-xl bg-gradient-to-br from-green-500/5 via-transparent to-transparent opacity-0 group-hover:opacity-100 transition-opacity duration-300" aria-hidden="true" />
 
               <div className="flex items-start justify-between gap-4 mb-4">
                 <div className="flex items-center gap-3">
-                  <div className="p-2.5 rounded-lg bg-foreground/8 border border-border/60 text-foreground group-hover:border-foreground/20 transition-colors">
+                  <div className="p-2.5 rounded-lg bg-green-500/10 border border-green-500/20 text-green-500 group-hover:bg-green-500/15 transition-colors">
                     <featuredTool.icon className="h-5 w-5" aria-hidden="true" />
                   </div>
                   <div>
-                    <div className="flex items-center gap-2">
+                    <div className="flex items-center gap-2 mb-0.5">
                       <h3 className="font-semibold text-lg leading-none">{featuredTool.name}</h3>
                       <span className="inline-flex items-center rounded-full bg-green-500/15 border border-green-500/30 px-2 py-0.5 text-[10px] font-medium text-green-500 uppercase tracking-wide">
                         Featured
@@ -511,19 +512,61 @@ export default function HomePage() {
                 </span>
               </div>
 
-              <p className="text-sm text-muted-foreground leading-relaxed mb-5 max-w-lg">
-                {featuredTool.description}
-              </p>
+              <div className="flex flex-col sm:flex-row gap-6">
+                {/* Left: copy + tags */}
+                <div className="flex-1 min-w-0">
+                  <p className="text-sm text-foreground/80 leading-relaxed mb-1.5 max-w-lg font-medium">
+                    {featuredTool.description}
+                  </p>
+                  {'secondary' in featuredTool && (
+                    <p className="text-xs text-muted-foreground leading-relaxed mb-5 max-w-lg">
+                      {(featuredTool as typeof featuredTool & { secondary: string }).secondary}
+                    </p>
+                  )}
+                  <div className="flex flex-wrap gap-2">
+                    {featuredTool.tags.map((tag) => (
+                      <span
+                        key={tag}
+                        className="px-2.5 py-1 rounded-md text-xs border border-green-500/20 text-green-600 dark:text-green-400 bg-green-500/5"
+                      >
+                        {tag}
+                      </span>
+                    ))}
+                  </div>
+                </div>
 
-              <div className="flex flex-wrap gap-2">
-                {featuredTool.tags.map((tag) => (
-                  <span
-                    key={tag}
-                    className="px-2.5 py-1 rounded-md text-xs border border-border/50 text-muted-foreground bg-muted/30"
-                  >
-                    {tag}
-                  </span>
-                ))}
+                {/* Right: mini nested checklist preview */}
+                <div className="shrink-0 hidden sm:flex flex-col gap-1.5 rounded-lg border border-border/40 bg-muted/20 px-4 py-3 w-48 self-start" aria-hidden="true">
+                  {[
+                    { label: 'Backend deploy',   depth: 0, done: true },
+                    { label: 'Run migrations',   depth: 1, done: true },
+                    { label: 'Health checks',    depth: 1, done: true },
+                    { label: 'Frontend deploy',  depth: 0, done: false },
+                    { label: 'Build assets',     depth: 1, done: false },
+                    { label: 'Purge CDN cache',  depth: 1, done: false },
+                  ].map((item, i) => (
+                    <div key={i} className="flex items-center gap-1.5" style={{ paddingLeft: item.depth * 14 }}>
+                      <div className={`h-3 w-3 rounded-sm border shrink-0 flex items-center justify-center transition-colors ${item.done ? 'bg-green-500 border-green-500' : 'border-border/60 bg-transparent'}`}>
+                        {item.done && (
+                          <svg viewBox="0 0 10 10" className="h-2 w-2 text-white" fill="none" stroke="currentColor" strokeWidth="2">
+                            <polyline points="1.5,5 4,7.5 8.5,2" />
+                          </svg>
+                        )}
+                      </div>
+                      <span className={`text-[10px] truncate ${item.done ? 'text-muted-foreground/50 line-through' : 'text-foreground/70'}`}>{item.label}</span>
+                    </div>
+                  ))}
+                  {/* Mini progress bar */}
+                  <div className="mt-1.5 pt-1.5 border-t border-border/30">
+                    <div className="flex items-center justify-between mb-1">
+                      <span className="text-[9px] text-muted-foreground/50">Progress</span>
+                      <span className="text-[9px] text-muted-foreground/50">50%</span>
+                    </div>
+                    <div className="h-0.5 w-full rounded-full bg-border/40 overflow-hidden">
+                      <div className="h-full w-1/2 rounded-full bg-green-500/70" />
+                    </div>
+                  </div>
+                </div>
               </div>
             </Link>
           )}
