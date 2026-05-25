@@ -84,72 +84,65 @@ export default function ChecklistPage() {
       {/* ── About + FAQ + Ads ── */}
       <section className="border-t border-border/50">
         <div className="container py-10 md:py-12">
-          <div className="flex gap-8">
 
-            {/* Left: about + banner + FAQ stacked */}
-            <div className="flex-1 min-w-0 max-w-3xl">
-
-              {/* About */}
-              <div className="mb-8">
-                <h2 className="text-xl font-bold tracking-tight mb-2">
-                  Built for developers.{' '}
-                  <span className="text-muted-foreground font-normal">Useful for everyone.</span>
-                </h2>
-                <p className="text-sm text-muted-foreground leading-relaxed mb-3 max-w-xl">
-                  Two modes, one tool. Simple mode turns any flat list into an interactive checklist in seconds.
-                  Advanced mode gives you a full 3-level hierarchy — parents, children, and sub-tasks — with
-                  progress tracking, collapse/expand, and nested drag-and-drop.
-                </p>
-                <div className="inline-flex items-center gap-2 text-xs text-muted-foreground/60 mb-6">
-                  <ShieldCheck className="h-3.5 w-3.5 text-green-500 shrink-0" aria-hidden="true" />
-                  Runs entirely in your browser. No uploads. No login. No tracking.
-                </div>
-                <div className="grid gap-6 sm:grid-cols-2 lg:grid-cols-4 mb-6">
-                  {[
-                    { icon: Zap,      label: 'Smart parsing',      body: 'Simple mode: paste anything — newlines, commas, tabs, or existing markers like [ ], [x], ✓, ✗. Advanced mode: paste indented text (2 spaces per level) to create nested tasks instantly.' },
-                    { icon: Layers,   label: 'Nested hierarchy',    body: 'Advanced mode supports 3 levels deep. Indent/outdent items with one click. Parent state syncs automatically from children.' },
-                    { icon: Share2,   label: 'Shareable URLs',      body: 'Encodes your checklist and active mode into a URL. Anyone opening the link sees the same list, same view.' },
-                    { icon: FileDown, label: 'Export anywhere',     body: 'PDF, Markdown, JSON, CSV, or plain text. Advanced PDF preserves indentation and colour-coded states.' },
-                  ].map(({ icon: Icon, label, body }) => (
-                    <div key={label}>
-                      <Icon className="h-4 w-4 text-muted-foreground/50 mb-2" aria-hidden="true" />
-                      <p className="text-sm font-semibold mb-1">{label}</p>
-                      <p className="text-xs text-muted-foreground leading-relaxed">{body}</p>
-                    </div>
-                  ))}
-                </div>
-                <p className="text-xs text-muted-foreground/40">
-                  {'Perfect for '}
-                  {['release checklists', 'QA runs', 'deployment tasks', 'sprint planning', 'study plans', 'packing lists'].map((item, i, arr) => (
-                    <span key={item}>
-                      <span className="text-muted-foreground/60">{item}</span>
-                      {i < arr.length - 1 && <span className="mx-1.5">·</span>}
-                    </span>
-                  ))}
-                </p>
-              </div>
-
-              {/* Banner ad between about and FAQ */}
-              <AdSlot variant="banner" className="mb-4" />
-
-              {/* FAQ */}
-              <FAQSection faqs={faqs} className="border-t pt-8" />
-
-              {/* Banner ad between about and FAQ */}
-              <AdSlot variant="banner" className="mt-8" />
-
+          {/* About — full width */}
+          <div className="mb-10">
+            <h2 className="text-xl font-bold tracking-tight mb-2">
+              Built for developers.{' '}
+              <span className="text-muted-foreground font-normal">Useful for everyone.</span>
+            </h2>
+            <p className="text-sm text-muted-foreground leading-relaxed mb-3 max-w-2xl">
+              Two modes, one tool. Simple mode turns any flat list into an interactive checklist in seconds.
+              Advanced mode gives you a full 3-level hierarchy — parents, children, and sub-tasks — with
+              progress tracking, collapse/expand, and nested drag-and-drop.
+            </p>
+            <div className="inline-flex items-center gap-2 text-xs text-muted-foreground/60 mb-8">
+              <ShieldCheck className="h-3.5 w-3.5 text-green-500 shrink-0" aria-hidden="true" />
+              Runs entirely in your browser. No uploads. No login. No tracking.
             </div>
+            <div className="grid gap-8 sm:grid-cols-2 lg:grid-cols-4 mb-8">
+              {[
+                { icon: Zap,      label: 'Smart parsing',   body: 'Simple mode: paste anything — newlines, commas, tabs, or existing markers like [ ], [x], ✓, ✗. Advanced mode: paste indented text (2 spaces per level) to create nested tasks instantly.' },
+                { icon: Layers,   label: 'Nested hierarchy', body: 'Advanced mode supports 3 levels deep. Indent/outdent items with one click. Parent state syncs automatically from children.' },
+                { icon: Share2,   label: 'Shareable URLs',  body: 'Encodes your checklist and active mode into a URL. Anyone opening the link sees the same list, same view.' },
+                { icon: FileDown, label: 'Export anywhere',  body: 'PDF, Markdown, JSON, CSV, or plain text. Advanced PDF preserves indentation and colour-coded states.' },
+              ].map(({ icon: Icon, label, body }) => (
+                <div key={label} className="flex flex-col gap-2">
+                  <div className="flex items-center justify-center w-8 h-8 rounded-md bg-muted/50">
+                    <Icon className="h-4 w-4 text-muted-foreground/70" aria-hidden="true" />
+                  </div>
+                  <p className="text-sm font-semibold">{label}</p>
+                  <p className="text-xs text-muted-foreground leading-relaxed">{body}</p>
+                </div>
+              ))}
+            </div>
+            <p className="text-xs text-muted-foreground/40">
+              {'Perfect for '}
+              {['release checklists', 'QA runs', 'deployment tasks', 'sprint planning', 'study plans', 'packing lists'].map((item, i, arr) => (
+                <span key={item}>
+                  <span className="text-muted-foreground/60">{item}</span>
+                  {i < arr.length - 1 && <span className="mx-1.5">·</span>}
+                </span>
+              ))}
+            </p>
+          </div>
 
-            {/* Right: stacked sidebar ads */}
-            <aside className="hidden xl:block w-[300px] 2xl:w-[600px] shrink-0">
+          {/* Banner ad */}
+          <AdSlot variant="banner" className="mb-10" />
+
+          {/* FAQ + sidebar ad */}
+          <div className="flex gap-8">
+            <div className="flex-1 min-w-0">
+              <FAQSection faqs={faqs} />
+            </div>
+            <aside className="hidden xl:block w-[300px] shrink-0">
               <div className="sticky top-20 flex flex-col gap-6">
                 <AdSlot variant="sidebar-wide" />
                 <AdSlot variant="sidebar" />
-                <AdSlot variant="sidebar" />
               </div>
             </aside>
-
           </div>
+
         </div>
       </section>
     </>
