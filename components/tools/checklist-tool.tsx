@@ -61,7 +61,7 @@ import {
 import { localStorageGet, localStorageSet, downloadFile, copyToClipboard } from '@/lib/utils'
 import { ToolLayout, ToolHeader } from './tool-layout'
 import { ChecklistPreviewPanel } from '@/components/home/checklist-preview'
-import { ChecklistAdvancedPreviewPanel } from '@/components/home/checklist-advanced-preview'
+import { ChecklistAdvancedPreviewPanel, AdvancedPastePreview } from '@/components/home/checklist-advanced-preview'
 import { PastePreview } from '@/components/home/paste-preview'
 import { Button } from '@/components/ui/button'
 import {
@@ -848,7 +848,7 @@ function ChecklistToolInner() {
 
   const sidebar = (mode === 'simple' ? !hasSimpleItems : !hasAdvItems) ? (
     <div className="sticky top-20 flex flex-col gap-3">
-      <PastePreview />
+      {mode === 'advanced' ? <AdvancedPastePreview /> : <PastePreview />}
       {mode === 'advanced' ? <ChecklistAdvancedPreviewPanel /> : <ChecklistPreviewPanel />}
     </div>
   ) : undefined
