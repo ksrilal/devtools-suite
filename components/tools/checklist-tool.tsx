@@ -733,24 +733,39 @@ function ChecklistToolInner() {
       if (!activeItem || !overItem) return prev
       if (activeItem.parentId !== overItem.parentId) return prev
 
-      // Move the active item + its descendants block to sit after/before the
-      // over item, preserving relative order of descendants.
-      const desc = descendantsOf(prev, activeItem.id)
-      const blockIds = new Set([activeItem.id, ...desc.map((d) => d.id)])
-      const without = prev.filter((i) => !blockIds.has(i.id))
-      const block = [activeItem, ...desc]
+      // Build blocks: each sibling + its descendants form one moveable unit
+      const siblings = prev.filter((i) => i.parentId === activeItem.parentId)
+      type Block = { head: AdvancedItem; all: AdvancedItem[] }
+      const blocks: Block[] = siblings.map((sib) => ({
+        head: sib,
+        all: [sib, ...descendantsOf(prev, sib.id)],
+      }))
 
-      // Find insertion point in the stripped array
-      const overIdxInWithout = without.findIndex((i) => i.id === overItem.id)
-      if (overIdxInWithout === -1) return prev
+      const activeBlockIdx = blocks.findIndex((b) => b.head.id === activeItem.id)
+      const overBlockIdx = blocks.findIndex((b) => b.head.id === overItem.id)
+      if (activeBlockIdx === -1 || overBlockIdx === -1) return prev
 
-      // Determine direction: if active was before over, insert after; otherwise before
-      const activeIdxInPrev = prev.findIndex((i) => i.id === activeItem.id)
-      const overIdxInPrev = prev.findIndex((i) => i.id === overItem.id)
-      const insertAfter = activeIdxInPrev < overIdxInPrev
+      const reordered = arrayMove(blocks, activeBlockIdx, overBlockIdx)
 
-      const result = [...without]
-      result.splice(insertAfter ? overIdxInWithout + 1 : overIdxInWithout, 0, ...block)
+      // Reconstruct full array: non-sibling items stay, sibling blocks replace their slice
+      const allSiblingAndDescIds = new Set(
+        blocks.flatMap((b) => b.all.map((i) => i.id))
+      )
+      const reorderedFlat = reordered.flatMap((b) => b.all)
+
+      // Replace the contiguous sibling+desc region with reordered version
+      const result: AdvancedItem[] = []
+      let inserted = false
+      for (const item of prev) {
+        if (allSiblingAndDescIds.has(item.id)) {
+          if (!inserted) {
+            result.push(...reorderedFlat)
+            inserted = true
+          }
+        } else {
+          result.push(item)
+        }
+      }
       return result
     })
   }, [])
