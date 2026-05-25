@@ -80,7 +80,7 @@ const tools = [
     description:
       'Organize complex tasks, workflows, and nested checklists with a fast, privacy-first checklist system.',
     secondary: 'Supports nested tasks, progress tracking, drag-and-drop organization, and shareable checklists.',
-    tags: ['workflow planning', 'nested checklists', 'progress tracking', 'team sharing', 'PDF export', 'drag & drop', 'offline ready'],
+    tags: ['workflow planning', 'nested checklists', 'progress tracking', 'offline ready'],
     featured: true,
   },
   {
@@ -512,7 +512,7 @@ export default function HomePage() {
                 </span>
               </div>
 
-              <div className="flex flex-col sm:flex-row gap-6">
+              <div className="flex flex-col sm:flex-row gap-8 items-start">
                 {/* Left: copy + tags */}
                 <div className="flex-1 min-w-0">
                   <p className="text-sm text-foreground/80 leading-relaxed mb-1.5 max-w-lg font-medium">
@@ -536,7 +536,7 @@ export default function HomePage() {
                 </div>
 
                 {/* Right: mini nested checklist preview */}
-                <div className="shrink-0 hidden sm:flex flex-col gap-1.5 rounded-lg border border-border/40 bg-muted/20 px-4 py-3 w-52 self-start" aria-hidden="true">
+                <div className="shrink-0 hidden sm:flex flex-col gap-1.5 rounded-lg border border-border/40 bg-muted/20 px-4 py-3.5 w-56 self-stretch justify-center" aria-hidden="true">
                   {[
                     { label: 'Q3 Planning',      depth: 0, done: true  },
                     { label: 'Set priorities',   depth: 1, done: true  },
