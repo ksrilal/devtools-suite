@@ -106,7 +106,7 @@ export default function ChecklistPage() {
                 </div>
                 <div className="grid gap-6 sm:grid-cols-2 lg:grid-cols-4 mb-6">
                   {[
-                    { icon: Zap,      label: 'Smart parsing',      body: 'Paste flat lists or indented text. Auto-detects newlines, commas, tabs, and markers like [ ], [x], ✓, ✗.' },
+                    { icon: Zap,      label: 'Smart parsing',      body: 'Simple mode: paste anything — newlines, commas, tabs, or existing markers like [ ], [x], ✓, ✗. Advanced mode: paste indented text (2 spaces per level) to create nested tasks instantly.' },
                     { icon: Layers,   label: 'Nested hierarchy',    body: 'Advanced mode supports 3 levels deep. Indent/outdent items with one click. Parent state syncs automatically from children.' },
                     { icon: Share2,   label: 'Shareable URLs',      body: 'Encodes your checklist and active mode into a URL. Anyone opening the link sees the same list, same view.' },
                     { icon: FileDown, label: 'Export anywhere',     body: 'PDF, Markdown, JSON, CSV, or plain text. Advanced PDF preserves indentation and colour-coded states.' },
