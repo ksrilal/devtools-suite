@@ -78,9 +78,9 @@ const tools = [
     icon: CheckSquare,
     name: 'Smart Checklist',
     description:
-      'Plan releases, deployments, migrations, and QA workflows with a powerful nested checklist system built for developers.',
+      'Organize complex tasks, workflows, and nested checklists with a fast, privacy-first checklist system.',
     secondary: 'Supports nested tasks, progress tracking, drag-and-drop organization, and shareable checklists.',
-    tags: ['release workflows', 'QA tracking', 'nested checklists'],
+    tags: ['workflow planning', 'nested checklists', 'progress tracking'],
     featured: true,
   },
   {
@@ -536,34 +536,34 @@ export default function HomePage() {
                 </div>
 
                 {/* Right: mini nested checklist preview */}
-                <div className="shrink-0 hidden sm:flex flex-col gap-1.5 rounded-lg border border-border/40 bg-muted/20 px-4 py-3 w-48 self-start" aria-hidden="true">
+                <div className="shrink-0 hidden sm:flex flex-col gap-1.5 rounded-lg border border-border/40 bg-muted/20 px-4 py-3 w-52 self-start" aria-hidden="true">
                   {[
-                    { label: 'Backend deploy',   depth: 0, done: true },
-                    { label: 'Run migrations',   depth: 1, done: true },
-                    { label: 'Health checks',    depth: 1, done: true },
-                    { label: 'Frontend deploy',  depth: 0, done: false },
-                    { label: 'Build assets',     depth: 1, done: false },
-                    { label: 'Purge CDN cache',  depth: 1, done: false },
+                    { label: 'Q3 Planning',      depth: 0, done: true  },
+                    { label: 'Set priorities',   depth: 1, done: true  },
+                    { label: 'Assign owners',    depth: 1, done: true  },
+                    { label: 'Launch campaign',  depth: 0, done: false },
+                    { label: 'Review assets',    depth: 1, done: false },
+                    { label: 'Schedule publish', depth: 1, done: false },
                   ].map((item, i) => (
                     <div key={i} className="flex items-center gap-1.5" style={{ paddingLeft: item.depth * 14 }}>
-                      <div className={`h-3 w-3 rounded-sm border shrink-0 flex items-center justify-center transition-colors ${item.done ? 'bg-green-500 border-green-500' : 'border-border/60 bg-transparent'}`}>
+                      <div className={`h-3 w-3 rounded-sm border shrink-0 flex items-center justify-center ${item.done ? 'bg-green-500 border-green-500' : 'border-border/60 bg-transparent'}`}>
                         {item.done && (
                           <svg viewBox="0 0 10 10" className="h-2 w-2 text-white" fill="none" stroke="currentColor" strokeWidth="2">
                             <polyline points="1.5,5 4,7.5 8.5,2" />
                           </svg>
                         )}
                       </div>
-                      <span className={`text-[10px] truncate ${item.done ? 'text-muted-foreground/50 line-through' : 'text-foreground/70'}`}>{item.label}</span>
+                      <span className={`text-[10px] truncate ${item.done ? 'text-muted-foreground/40 line-through' : 'text-foreground/60'}`}>{item.label}</span>
                     </div>
                   ))}
                   {/* Mini progress bar */}
-                  <div className="mt-1.5 pt-1.5 border-t border-border/30">
+                  <div className="mt-2 pt-2 border-t border-border/30">
                     <div className="flex items-center justify-between mb-1">
-                      <span className="text-[9px] text-muted-foreground/50">Progress</span>
-                      <span className="text-[9px] text-muted-foreground/50">50%</span>
+                      <span className="text-[9px] text-muted-foreground/40">3 of 6 done</span>
+                      <span className="text-[9px] text-green-500/70 font-medium">50%</span>
                     </div>
                     <div className="h-0.5 w-full rounded-full bg-border/40 overflow-hidden">
-                      <div className="h-full w-1/2 rounded-full bg-green-500/70" />
+                      <div className="h-full w-1/2 rounded-full bg-green-500/60 transition-all duration-500" />
                     </div>
                   </div>
                 </div>
