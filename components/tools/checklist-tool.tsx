@@ -467,9 +467,8 @@ function ChecklistToolInner() {
   )
 
   // ── Mode ──────────────────────────────────────────────────────────────────
-  const [mode, setMode] = useState<ChecklistMode>(() =>
-    localStorageGet<ChecklistMode>(MODE_KEY, 'simple')
-  )
+  const [mounted, setMounted] = useState(false)
+  const [mode, setMode] = useState<ChecklistMode>('simple')
 
   // ── Simple mode state ─────────────────────────────────────────────────────
   const [input, setInput] = useState('')
@@ -499,6 +498,7 @@ function ChecklistToolInner() {
   useEffect(() => {
     const savedMode = localStorageGet<ChecklistMode>(MODE_KEY, 'simple')
     setMode(savedMode)
+    setMounted(true)
 
     // Simple
     const urlData = searchParams.get('c')
@@ -870,11 +870,11 @@ function ChecklistToolInner() {
       <ToolHeader
         title="Smart Checklist"
         description="Paste any list to create an interactive, shareable checklist."
-        toolbar={mode === 'simple' ? simpleToolbar : advToolbar}
+        toolbar={!mounted ? undefined : mode === 'simple' ? simpleToolbar : advToolbar}
       />
 
       {/* ── SIMPLE MODE ──────────────────────────────────────────────────── */}
-      {mode === 'simple' && (
+      {mounted && mode === 'simple' && (
         <>
           {!hasSimpleItems && (
             <div className="mb-4 flex items-center justify-between">
@@ -1009,7 +1009,7 @@ function ChecklistToolInner() {
       )}
 
       {/* ── ADVANCED MODE ─────────────────────────────────────────────────── */}
-      {mode === 'advanced' && (
+      {mounted && mode === 'advanced' && (
         <>
           {!hasAdvItems && (
             <div className="mb-4 flex items-center justify-between">
