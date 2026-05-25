@@ -198,9 +198,8 @@ export function indentItem(items: AdvancedItem[], id: string): AdvancedItem[] {
 
   // Insert after last descendant of previous sibling (excluding our block)
   const prevSiblingDesc = descendantsOf(items, prevSibling.id).filter((d) => !blockIds.has(d.id))
-  const anchorId = prevSiblingDesc.length > 0
-    ? prevSiblingDesc[prevSiblingDesc.length - 1]!.id
-    : prevSibling.id
+  const lastPrevDesc = prevSiblingDesc[prevSiblingDesc.length - 1]
+  const anchorId = lastPrevDesc ? lastPrevDesc.id : prevSibling.id
 
   const without = items.filter((i) => !blockIds.has(i.id))
   const anchorIdx = without.findIndex((i) => i.id === anchorId)
@@ -230,9 +229,8 @@ export function outdentItem(items: AdvancedItem[], id: string): AdvancedItem[] {
 
   // Find the last descendant of the old parent (excluding our block)
   const oldParentDesc = descendantsOf(items, parent.id).filter((d) => !blockIds.has(d.id))
-  const anchorId = oldParentDesc.length > 0
-    ? oldParentDesc[oldParentDesc.length - 1]!.id
-    : parent.id
+  const lastOldDesc = oldParentDesc[oldParentDesc.length - 1]
+  const anchorId = lastOldDesc ? lastOldDesc.id : parent.id
 
   // Remove block from array, then insert after anchor
   const without = items.filter((i) => !blockIds.has(i.id))
