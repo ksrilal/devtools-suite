@@ -80,7 +80,7 @@ const tools = [
     description:
       'Organize complex tasks, workflows, and nested checklists with a fast, privacy-first checklist system.',
     secondary: 'Supports nested tasks, progress tracking, drag-and-drop organization, and shareable checklists.',
-    tags: ['workflow planning', 'nested checklists', 'progress tracking', 'team sharing'],
+    tags: ['workflow planning', 'nested checklists', 'progress tracking', 'team sharing', 'PDF export', 'drag & drop', 'offline ready'],
     featured: true,
   },
   {
