@@ -39,16 +39,28 @@ function ItemIcon({ state }: { state: ItemState }) {
   return                           <Square     className="h-3.5 w-3.5 text-muted-foreground/40 shrink-0" />
 }
 
+function getGroup(items: PreviewItem[], parentIdx: number, parentDepth: Depth): PreviewItem[] {
+  const rest = items.slice(parentIdx + 1)
+  const end = rest.findIndex(i => i.depth <= parentDepth)
+  return end === -1 ? rest : rest.slice(0, end)
+}
+
 function updateProgress(items: PreviewItem[]): PreviewItem[] {
-  return items.map(item => {
-    if (item.depth !== 0) return item
-    const idx = items.findIndex(i => i.id === item.id)
-    const rest = items.slice(idx + 1)
-    const nextParent = rest.findIndex(i => i.depth === 0)
-    const group = nextParent === -1 ? rest : rest.slice(0, nextParent)
-    const leaves = group.filter(i => i.depth === 2)
-    const checked = leaves.filter(i => i.state === 'checked').length
-    return { ...item, progress: `${checked}/${leaves.length}` }
+  return items.map((item, idx) => {
+    if (item.depth === 0) {
+      const group = getGroup(items, idx, 0)
+      const leaves = group.filter(i => i.depth === 2)
+      const checked = leaves.filter(i => i.state === 'checked').length
+      const allChecked = leaves.length > 0 && checked === leaves.length
+      return { ...item, progress: `${checked}/${leaves.length}`, state: allChecked ? 'checked' : 'unchecked' }
+    }
+    if (item.depth === 1) {
+      const group = getGroup(items, idx, 1)
+      const leaves = group.filter(i => i.depth === 2)
+      const allChecked = leaves.length > 0 && leaves.every(i => i.state === 'checked')
+      return { ...item, state: allChecked ? 'checked' : 'unchecked' }
+    }
+    return item
   })
 }
 
