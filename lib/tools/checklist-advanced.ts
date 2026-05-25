@@ -174,30 +174,43 @@ export function addChild(items: AdvancedItem[], parentId: string): AdvancedItem[
   return result
 }
 
-/** Indent: make item a child of its previous sibling. */
+/** Indent: make item a child of its previous sibling, repositioned after that sibling's block. */
 export function indentItem(items: AdvancedItem[], id: string): AdvancedItem[] {
   const item = items.find((i) => i.id === id)
   if (!item) return items
   const siblings = items.filter((i) => i.parentId === item.parentId)
   const idx = siblings.findIndex((i) => i.id === id)
-  if (idx <= 0) return items // no previous sibling
+  if (idx <= 0) return items
   const prevSibling = siblings[idx - 1]
   if (!prevSibling) return items
-  if (prevSibling.depth >= 2) return items // can't nest deeper than 2
+  if (prevSibling.depth >= 2) return items
   const newParentId = prevSibling.id
   const newDepth = (prevSibling.depth + 1) as ItemDepth
-  // Also re-depth all descendants
-  const desc = descendantsOf(items, id)
   const depthDelta = newDepth - item.depth
-  return items.map((i) => {
+
+  // Build block with updated depths
+  const desc = descendantsOf(items, id)
+  const blockIds = new Set([id, ...desc.map((d) => d.id)])
+  const block = [item, ...desc].map((i) => {
     if (i.id === id) return { ...i, parentId: newParentId, depth: newDepth }
-    const d = desc.find((d) => d.id === i.id)
-    if (d) return { ...i, depth: Math.min(2, d.depth + depthDelta) as ItemDepth }
-    return i
+    return { ...i, depth: Math.min(2, i.depth + depthDelta) as ItemDepth }
   })
+
+  // Insert after last descendant of previous sibling (excluding our block)
+  const prevSiblingDesc = descendantsOf(items, prevSibling.id).filter((d) => !blockIds.has(d.id))
+  const anchorId = prevSiblingDesc.length > 0
+    ? prevSiblingDesc[prevSiblingDesc.length - 1]!.id
+    : prevSibling.id
+
+  const without = items.filter((i) => !blockIds.has(i.id))
+  const anchorIdx = without.findIndex((i) => i.id === anchorId)
+  if (anchorIdx === -1) return items
+  const result = [...without]
+  result.splice(anchorIdx + 1, 0, ...block)
+  return result
 }
 
-/** Outdent: promote item to parent's parent. */
+/** Outdent: promote item to parent's parent, repositioned after old parent's block. */
 export function outdentItem(items: AdvancedItem[], id: string): AdvancedItem[] {
   const item = items.find((i) => i.id === id)
   if (!item || item.parentId === null) return items
@@ -205,14 +218,29 @@ export function outdentItem(items: AdvancedItem[], id: string): AdvancedItem[] {
   if (!parent) return items
   const newParentId = parent.parentId
   const newDepth = (item.depth - 1) as ItemDepth
-  const desc = descendantsOf(items, id)
   const depthDelta = newDepth - item.depth // negative
-  return items.map((i) => {
+
+  // Build the block: item + its descendants, with updated depths
+  const desc = descendantsOf(items, id)
+  const blockIds = new Set([id, ...desc.map((d) => d.id)])
+  const block = [item, ...desc].map((i) => {
     if (i.id === id) return { ...i, parentId: newParentId, depth: newDepth }
-    const d = desc.find((d) => d.id === i.id)
-    if (d) return { ...i, depth: Math.max(0, d.depth + depthDelta) as ItemDepth }
-    return i
+    return { ...i, depth: Math.max(0, i.depth + depthDelta) as ItemDepth }
   })
+
+  // Find the last descendant of the old parent (excluding our block)
+  const oldParentDesc = descendantsOf(items, parent.id).filter((d) => !blockIds.has(d.id))
+  const anchorId = oldParentDesc.length > 0
+    ? oldParentDesc[oldParentDesc.length - 1]!.id
+    : parent.id
+
+  // Remove block from array, then insert after anchor
+  const without = items.filter((i) => !blockIds.has(i.id))
+  const anchorIdx = without.findIndex((i) => i.id === anchorId)
+  if (anchorIdx === -1) return items
+  const result = [...without]
+  result.splice(anchorIdx + 1, 0, ...block)
+  return result
 }
 
 /** Toggle collapsed state of an item. */
