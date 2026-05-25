@@ -467,7 +467,9 @@ function ChecklistToolInner() {
   )
 
   // ── Mode ──────────────────────────────────────────────────────────────────
-  const [mode, setMode] = useState<ChecklistMode>('simple')
+  const [mode, setMode] = useState<ChecklistMode>(() =>
+    localStorageGet<ChecklistMode>(MODE_KEY, 'simple')
+  )
 
   // ── Simple mode state ─────────────────────────────────────────────────────
   const [input, setInput] = useState('')
