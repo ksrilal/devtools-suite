@@ -254,7 +254,7 @@ export function visibleItems(items: AdvancedItem[]): AdvancedItem[] {
 
 // ─── Reorder (flat array move, keeping parent constraints) ────────────────────
 
-/** Move item (and its descendants) to a new position in the flat array. */
+/** Move item (and its descendants) within the same sibling group only. */
 export function reorderItem(
   items: AdvancedItem[],
   activeId: string,
@@ -265,7 +265,12 @@ export function reorderItem(
   if (activeIdx === -1 || overIdx === -1 || activeIdx === overIdx) return items
 
   const active = items[activeIdx]
-  if (!active) return items
+  const over = items[overIdx]
+  if (!active || !over) return items
+
+  // Only allow reorder within the same sibling group
+  if (active.parentId !== over.parentId) return items
+
   const desc = descendantsOf(items, activeId)
   const block = [active, ...desc]
   const blockIds = new Set(block.map((b) => b.id))
