@@ -453,7 +453,7 @@ const ADVANCED_TITLE_KEY = 'devtools_checklist_advanced_title'
 const MODE_KEY = 'devtools_checklist_mode'
 
 type ExportFormat = 'text' | 'markdown' | 'csv'
-type AdvancedExportFormat = 'markdown' | 'text' | 'json' | 'csv'
+type AdvancedExportFormat = 'markdown' | 'text' | 'json' | 'csv' | 'pdf'
 type ChecklistMode = 'simple' | 'advanced'
 
 // ─── Main component ───────────────────────────────────────────────────────────
@@ -788,6 +788,45 @@ function ChecklistToolInner() {
       downloadFile(exportAdvancedAsJSON(advItems), `${slug}.json`, 'application/json')
     } else if (format === 'csv') {
       downloadFile(exportAdvancedAsCSV(advItems), `${slug}.csv`, 'text/csv')
+    } else if (format === 'pdf') {
+      const { jsPDF } = await import('jspdf')
+      const doc = new jsPDF()
+      const advProgress = computeOverallProgress(advItems)
+      doc.setFontSize(18); doc.setFont('helvetica', 'bold')
+      doc.text(advTitle || 'Checklist', 20, 22)
+      doc.setFontSize(9); doc.setFont('helvetica', 'normal'); doc.setTextColor(120, 120, 120)
+      doc.text(`${advProgress.checked} of ${advProgress.total} done`, 20, 30)
+      doc.setTextColor(0, 0, 0); doc.setDrawColor(220, 220, 220); doc.line(20, 34, 190, 34)
+      doc.setFontSize(11); let y = 44
+      for (const item of advItems) {
+        if (y > 275) { doc.addPage(); y = 20 }
+        const indentX = 20 + item.depth * 8
+        const boxY = y - 4
+        doc.setDrawColor(160, 160, 160); doc.setFillColor(255, 255, 255)
+        if (item.state === 'checked') { doc.setFillColor(34, 197, 94); doc.setDrawColor(34, 197, 94) }
+        else if (item.state === 'invalid') { doc.setFillColor(239, 68, 68); doc.setDrawColor(239, 68, 68) }
+        doc.roundedRect(indentX, boxY, 5, 5, 0.8, 0.8, 'FD')
+        if (item.state === 'checked') {
+          doc.setDrawColor(255, 255, 255); doc.setLineWidth(0.8)
+          doc.line(indentX + 1.2, boxY + 2.8, indentX + 2.2, boxY + 3.9)
+          doc.line(indentX + 2.2, boxY + 3.9, indentX + 4.0, boxY + 1.5)
+          doc.setLineWidth(0.2)
+        } else if (item.state === 'invalid') {
+          doc.setDrawColor(255, 255, 255); doc.setLineWidth(0.8)
+          doc.line(indentX + 1.3, boxY + 1.3, indentX + 3.7, boxY + 3.7)
+          doc.line(indentX + 3.7, boxY + 1.3, indentX + 1.3, boxY + 3.7)
+          doc.setLineWidth(0.2)
+        }
+        if (item.state === 'checked') doc.setTextColor(150, 150, 150)
+        else if (item.state === 'invalid') doc.setTextColor(200, 80, 80)
+        else doc.setTextColor(30, 30, 30)
+        const textX = indentX + 8
+        const maxWidth = 190 - textX
+        const lines = doc.splitTextToSize(item.text, maxWidth) as string[]
+        doc.text(lines, textX, y); doc.setTextColor(0, 0, 0)
+        y += Math.max(lines.length * 7, 9)
+      }
+      doc.save(`${slug}.pdf`)
     }
   }, [advItems, advTitle])
 
@@ -892,7 +931,7 @@ function ChecklistToolInner() {
           <Download className="h-3.5 w-3.5 mr-1" />Export
         </Button>
         <div className="absolute right-0 top-full mt-1 hidden group-hover:flex group-focus-within:flex flex-col bg-popover border rounded-md shadow-lg z-10 min-w-32 py-1">
-          {(['markdown', 'text', 'json', 'csv'] as const).map((fmt) => (
+          {(['pdf', 'markdown', 'text', 'json', 'csv'] as const).map((fmt) => (
             <button
               key={fmt}
               onClick={() => void handleAdvExport(fmt)}
