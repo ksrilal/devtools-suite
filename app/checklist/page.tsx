@@ -1,5 +1,5 @@
 import type { Metadata } from 'next'
-import { ShieldCheck, Zap, Share2, FileDown } from 'lucide-react'
+import { ShieldCheck, Zap, Share2, FileDown, Layers } from 'lucide-react'
 import { toolMetadata, webApplicationLD, faqPageLD } from '@/lib/seo/metadata'
 import { ChecklistTool } from '@/components/tools/checklist-tool'
 import { FAQSection } from '@/components/tools/faq-section'
@@ -22,29 +22,44 @@ export const metadata: Metadata = toolMetadata({
 
 const faqs = [
   {
+    question: 'What is the difference between Simple and Advanced mode?',
+    answer:
+      'Simple mode converts any flat list into a checklist instantly — great for quick task lists. Advanced mode supports up to 3 levels of nesting (parent → child → sub-task), with collapse/expand, per-parent progress tracking, and drag-and-drop reordering within each level.',
+  },
+  {
     question: 'How does the smart checklist tool work?',
     answer:
-      'Paste any text — newline-separated, comma-separated, or mixed — and the tool instantly converts it into an interactive checklist. Check items off, mark them as invalid, reorder with drag-and-drop, and export when done.',
+      'Paste any text and the tool converts it into an interactive checklist. In Simple mode it splits by newlines, commas, or tabs. In Advanced mode, indent with 2 spaces per level to create nested items. Check off items, mark them invalid, reorder with drag-and-drop, and export when done.',
+  },
+  {
+    question: 'How do I create nested tasks in Advanced mode?',
+    answer:
+      'Paste indented text using 2 spaces per level (e.g. "  child task" under a parent), or start with a blank list and use the indent button (→) to move items deeper. You can nest up to 3 levels: parent, child, and sub-task. Use the outdent button (←) to promote items back up.',
   },
   {
     question: 'Is my checklist data saved?',
     answer:
-      'Your checklist is automatically saved in your browser\'s localStorage. No data is sent to any server. Everything stays on your device.',
+      'Yes — both Simple and Advanced checklists are automatically saved in your browser\'s localStorage, including your last selected mode. No data is sent to any server. Everything stays on your device.',
   },
   {
     question: 'Can I share my checklist with others?',
     answer:
-      'Yes! Use the Share button to generate a URL that encodes your entire checklist. Anyone with the link can open it in their browser.',
+      'Yes. The Share button generates a URL that encodes your entire checklist (and the active mode) so anyone opening the link sees the same list in the same mode — no account or backend needed.',
   },
   {
     question: 'Can I export my checklist as a PDF?',
     answer:
-      'Yes, click the Export PDF button to download a clean, print-friendly PDF of your checklist with all item states preserved.',
+      'Yes. Both Simple and Advanced modes support PDF export. The Advanced PDF preserves the hierarchy with indentation per nesting level and colour-coded checkboxes (green = done, red = invalid).',
   },
   {
-    question: 'What input formats are supported?',
+    question: 'What export formats are available?',
     answer:
-      'The tool accepts newlines, commas, and tabs as separators. It also auto-detects existing checkbox markers like [ ], [x], ✓, and ✗.',
+      'Simple mode: PDF, Markdown, Plain Text, CSV. Advanced mode: PDF, Markdown, Plain Text, JSON (full tree structure), CSV.',
+  },
+  {
+    question: 'What input formats are supported in Simple mode?',
+    answer:
+      'Newlines, commas, and tabs as separators. Auto-detects existing checkbox markers like [ ], [x], ✓, and ✗ — no reformatting needed.',
   },
 ]
 
@@ -81,18 +96,20 @@ export default function ChecklistPage() {
                   <span className="text-muted-foreground font-normal">Useful for everyone.</span>
                 </h2>
                 <p className="text-sm text-muted-foreground leading-relaxed mb-3 max-w-xl">
-                  Turn any list into an interactive checklist instantly — from release workflows and QA
-                  steps to sprint tasks, study plans, and packing lists. Paste once, check off as you go.
+                  Two modes, one tool. Simple mode turns any flat list into an interactive checklist in seconds.
+                  Advanced mode gives you a full 3-level hierarchy — parents, children, and sub-tasks — with
+                  progress tracking, collapse/expand, and nested drag-and-drop.
                 </p>
                 <div className="inline-flex items-center gap-2 text-xs text-muted-foreground/60 mb-6">
                   <ShieldCheck className="h-3.5 w-3.5 text-green-500 shrink-0" aria-hidden="true" />
                   Runs entirely in your browser. No uploads. No login. No tracking.
                 </div>
-                <div className="grid gap-6 sm:grid-cols-3 mb-6">
+                <div className="grid gap-6 sm:grid-cols-2 lg:grid-cols-4 mb-6">
                   {[
-                    { icon: Zap,      label: 'Smart parsing',   body: 'Auto-detects newlines, commas, tabs, and existing markers like [ ], [x], ✓, and ✗. No formatting needed.' },
-                    { icon: Share2,   label: 'Shareable URLs',  body: 'Your entire checklist encodes into a URL. Share with your team instantly — no account, no backend.' },
-                    { icon: FileDown, label: 'Export anywhere', body: 'Download as PDF, Markdown, CSV, or plain text. Print-ready in one click.' },
+                    { icon: Zap,      label: 'Smart parsing',      body: 'Paste flat lists or indented text. Auto-detects newlines, commas, tabs, and markers like [ ], [x], ✓, ✗.' },
+                    { icon: Layers,   label: 'Nested hierarchy',    body: 'Advanced mode supports 3 levels deep. Indent/outdent items with one click. Parent state syncs automatically from children.' },
+                    { icon: Share2,   label: 'Shareable URLs',      body: 'Encodes your checklist and active mode into a URL. Anyone opening the link sees the same list, same view.' },
+                    { icon: FileDown, label: 'Export anywhere',     body: 'PDF, Markdown, JSON, CSV, or plain text. Advanced PDF preserves indentation and colour-coded states.' },
                   ].map(({ icon: Icon, label, body }) => (
                     <div key={label}>
                       <Icon className="h-4 w-4 text-muted-foreground/50 mb-2" aria-hidden="true" />
