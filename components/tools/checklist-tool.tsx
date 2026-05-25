@@ -44,7 +44,7 @@ import {
   outdentItem,
   toggleCollapse,
   setAllCollapsed,
-  reorderItem,
+  descendantsOf,
   visibleItems,
   childrenOf,
   prevSiblingExists,
@@ -727,7 +727,32 @@ function ChecklistToolInner() {
   const handleAdvDragEnd = useCallback((event: DragEndEvent) => {
     const { active, over } = event
     if (!over || active.id === over.id) return
-    setAdvItems((prev) => reorderItem(prev, String(active.id), String(over.id)))
+    setAdvItems((prev) => {
+      const activeItem = prev.find((i) => i.id === active.id)
+      const overItem = prev.find((i) => i.id === over.id)
+      if (!activeItem || !overItem) return prev
+      if (activeItem.parentId !== overItem.parentId) return prev
+
+      // Move the active item + its descendants block to sit after/before the
+      // over item, preserving relative order of descendants.
+      const desc = descendantsOf(prev, activeItem.id)
+      const blockIds = new Set([activeItem.id, ...desc.map((d) => d.id)])
+      const without = prev.filter((i) => !blockIds.has(i.id))
+      const block = [activeItem, ...desc]
+
+      // Find insertion point in the stripped array
+      const overIdxInWithout = without.findIndex((i) => i.id === overItem.id)
+      if (overIdxInWithout === -1) return prev
+
+      // Determine direction: if active was before over, insert after; otherwise before
+      const activeIdxInPrev = prev.findIndex((i) => i.id === activeItem.id)
+      const overIdxInPrev = prev.findIndex((i) => i.id === overItem.id)
+      const insertAfter = activeIdxInPrev < overIdxInPrev
+
+      const result = [...without]
+      result.splice(insertAfter ? overIdxInWithout + 1 : overIdxInWithout, 0, ...block)
+      return result
+    })
   }, [])
 
   const handleAdvShare = useCallback(async () => {
