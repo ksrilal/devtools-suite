@@ -31,7 +31,7 @@ const SEQUENCE: Array<{ itemId: number; toState: ItemState }> = [
   { itemId: 7, toState: 'checked' },
 ]
 
-const INDENT_PX: Record<Depth, string> = { 0: '0px', 1: '14px', 2: '28px' }
+const INDENT_PX: Record<Depth, string> = { 0: '0px', 1: '16px', 2: '32px' }
 
 function ItemIcon({ state }: { state: ItemState }) {
   if (state === 'checked') return <CheckSquare className="h-3.5 w-3.5 text-green-500 shrink-0" />
@@ -100,7 +100,7 @@ export function ChecklistAdvancedPreviewPanel() {
         {items.map(item => (
           <li
             key={item.id}
-            style={{ paddingLeft: INDENT_PX[item.depth] }}
+            style={{ marginLeft: INDENT_PX[item.depth] }}
             className={[
               'flex items-center gap-1.5 rounded-md px-2 py-1 text-xs transition-colors duration-200',
               activeId === item.id ? 'bg-accent' : '',
@@ -111,9 +111,7 @@ export function ChecklistAdvancedPreviewPanel() {
           >
             {item.depth === 0
               ? <ChevronDown className="h-3 w-3 text-muted-foreground/50 shrink-0" />
-              : item.depth === 1
-                ? <span className="w-3 shrink-0 border-l-2 border-b-2 border-border/30 h-3 rounded-bl-sm" />
-                : <span className="w-3 shrink-0 border-l border-b border-border/20 h-3 rounded-bl-sm" />
+              : <span className="w-2 shrink-0" />
             }
             <ItemIcon state={item.state} />
             <span className="truncate">{item.label}</span>
