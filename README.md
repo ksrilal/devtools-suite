@@ -30,7 +30,7 @@ https://github.com/user-attachments/assets/ce40bfe3-260f-47ec-b867-24a3e925c47f
 
 | Tool | Description |
 |------|-------------|
-| [Smart Checklist](https://devtoolssuite.dev/checklist) | Convert any text into an interactive checklist with drag-and-drop, PDF export, and shareable URLs |
+| [Smart Checklist](https://devtoolssuite.dev/checklist) | Two-mode checklist system — Simple mode converts any flat list instantly; Advanced mode supports 3-level nested tasks with collapse/expand, per-parent progress tracking, indent/outdent, drag-and-drop reorder within levels, PDF/Markdown/JSON/CSV export, and shareable URLs with mode preserved |
 | [JSON Formatter](https://devtoolssuite.dev/json-formatter) | Prettify, minify, validate and explore JSON with syntax highlighting |
 | [Cron Generator](https://devtoolssuite.dev/cron-generator) | Build cron expressions visually with human-readable descriptions and next-execution previews |
 | [Diff Checker](https://devtoolssuite.dev/diff-checker) | Compare two texts side by side with line, character, and JSON-aware diff modes |
@@ -111,6 +111,11 @@ All specs live in [`specs/001-devtools-suite-platform/`](specs/001-devtools-suit
 | Plain `<script>` in `<head>` for AdSense | `next/script strategy="afterInteractive"` moves to body, breaking AdSense crawler verification |
 | Human-friendly YAML errors | Source-scanning for `key:value` patterns before trusting js-yaml's parser position |
 | cURL import parser | Custom tokenizer handles bash (`\\\n`), PowerShell (backtick), and `--json` flag across shell dialects |
+| Flat array with `parentId` + `depth` for advanced checklist | Simpler dnd-kit integration than a recursive tree; `descendantsOf()` + `visibleItems()` handle collapse and cascade |
+| Sibling-block reorder strategy | DnD moves item + entire descendant subtree as one atomic block using `arrayMove` on sibling groups |
+| Ancestor state sync after toggle | After any item toggle, walk up `parentId` chain and derive each parent's state from its children's states |
+| `mounted` guard for mode hydration | Server renders `'simple'`, `useEffect` reads localStorage; `mounted` flag prevents hydration mismatch |
+| `?m=` param in share URL | Encodes active mode (simple/advanced) alongside checklist data so recipients open the correct view |
 
 ---
 
@@ -125,11 +130,13 @@ All specs live in [`specs/001-devtools-suite-platform/`](specs/001-devtools-suit
 
 ## Tech Stack
 
-- [Next.js 14](https://nextjs.org) — App Router, static generation (42 static pages)
+- [Next.js 14](https://nextjs.org) — App Router, static generation (43 static pages)
 - [TypeScript](https://www.typescriptlang.org) — strict mode with `noUncheckedIndexedAccess` and `exactOptionalPropertyTypes`
 - [Tailwind CSS](https://tailwindcss.com) — utility-first styling
 - [shadcn/ui](https://ui.shadcn.com) — accessible component primitives
-- [@dnd-kit](https://dndkit.com) — drag-and-drop for the checklist
+- [@dnd-kit](https://dndkit.com) — drag-and-drop for the checklist (simple + advanced modes)
+- [lz-string](https://github.com/pieroxy/lz-string) — LZString compression for checklist share URLs
+- [jspdf](https://github.com/parallax/jsPDF) — client-side PDF export for both checklist modes
 - [js-yaml](https://github.com/nodeca/js-yaml) — YAML parsing and formatting
 - [bcryptjs](https://github.com/dcodeIO/bcrypt.js) — browser-compatible bcrypt hashing
 - [papaparse](https://www.papaparse.com) — CSV parsing
@@ -205,6 +212,8 @@ components/
   ui/                       # Shared UI (Button, CopyButton, AdSlot, etc.)
 lib/
   tools/                    # Core tool logic (pure functions, no React)
+    checklist.ts            # Simple mode: parse, state transitions, encode/decode, export
+    checklist-advanced.ts   # Advanced mode: nested tree utilities, indent/outdent, progress, encode/decode, export
   seo/                      # Metadata helpers (toolMetadata, webApplicationLD, faqPageLD)
 ```
 
