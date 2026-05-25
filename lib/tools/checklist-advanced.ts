@@ -92,14 +92,36 @@ export function transitionAdvancedState(current: ChecklistState): ChecklistState
   return 'unchecked'
 }
 
-/** Toggle an item. If it has descendants, cascade check/uncheck to leaves. */
+/** Derive a parent's state from its direct children's states. */
+function deriveParentState(items: AdvancedItem[], parentId: string): ChecklistState {
+  const children = childrenOf(items, parentId)
+  if (children.length === 0) return items.find((i) => i.id === parentId)?.state ?? 'unchecked'
+  if (children.every((c) => c.state === 'checked')) return 'checked'
+  if (children.some((c) => c.state === 'invalid')) return 'invalid'
+  return 'unchecked'
+}
+
+/** After mutating items, walk up ancestor chain and sync each parent's state. */
+function syncAncestors(items: AdvancedItem[], startId: string): AdvancedItem[] {
+  let result = items
+  let current = result.find((i) => i.id === startId)
+  while (current?.parentId) {
+    const parentId = current.parentId
+    const derived = deriveParentState(result, parentId)
+    result = result.map((i) => (i.id === parentId ? { ...i, state: derived } : i))
+    current = result.find((i) => i.id === parentId)
+  }
+  return result
+}
+
+/** Toggle an item. If it has descendants, cascade check/uncheck to leaves, then sync ancestors. */
 export function toggleItem(items: AdvancedItem[], id: string): AdvancedItem[] {
   const item = items.find((i) => i.id === id)
   if (!item) return items
   const next = transitionAdvancedState(item.state)
   const desc = descendantsOf(items, id)
   const descIds = new Set(desc.map((d) => d.id))
-  return items.map((i) => {
+  let result = items.map((i) => {
     if (i.id === id) return { ...i, state: next }
     // cascade: only when toggling to checked or unchecked (not invalid)
     if (descIds.has(i.id) && (next === 'checked' || next === 'unchecked')) {
@@ -107,6 +129,16 @@ export function toggleItem(items: AdvancedItem[], id: string): AdvancedItem[] {
     }
     return i
   })
+  // sync ancestors of the toggled item
+  result = syncAncestors(result, id)
+  // if item has descendants, also sync ancestors of each leaf
+  if (desc.length > 0) {
+    const leaves = desc.filter((d) => childrenOf(items, d.id).length === 0)
+    for (const leaf of leaves) {
+      result = syncAncestors(result, leaf.id)
+    }
+  }
+  return result
 }
 
 // ─── Mutation helpers ─────────────────────────────────────────────────────────
