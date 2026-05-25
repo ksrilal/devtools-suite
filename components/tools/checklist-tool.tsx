@@ -266,7 +266,8 @@ function AdvancedItemRow({
   }, [draft, item.id, item.text, onEdit])
 
   const hasChildren = childrenOf(allItems, item.id).length > 0
-  const canIndent = item.depth < 2 && !hasChildren && prevSiblingExists(allItems, item)
+  const deepestDesc = descendantsOf(allItems, item.id).reduce((max, d) => Math.max(max, d.depth) as typeof max, item.depth as number)
+  const canIndent = item.depth < 2 && deepestDesc < 2 && prevSiblingExists(allItems, item)
   const canOutdent = item.depth > 0
   const canAddChild = item.depth < 2
   const progress = hasChildren ? computeItemProgress(allItems, item.id) : null
