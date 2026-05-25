@@ -497,7 +497,10 @@ function ChecklistToolInner() {
 
   // ── Load on mount ─────────────────────────────────────────────────────────
   useEffect(() => {
-    const savedMode = localStorageGet<ChecklistMode>(MODE_KEY, 'simple')
+    const urlMode = searchParams.get('m') as ChecklistMode | null
+    const savedMode = urlMode === 'simple' || urlMode === 'advanced'
+      ? urlMode
+      : localStorageGet<ChecklistMode>(MODE_KEY, 'simple')
     setMode(savedMode)
     setMounted(true)
 
@@ -586,7 +589,7 @@ function ChecklistToolInner() {
 
   const handleShare = useCallback(async () => {
     const encoded = encodeChecklistToURL(items)
-    const url = `${window.location.origin}/checklist?c=${encoded}`
+    const url = `${window.location.origin}/checklist?m=simple&c=${encoded}`
     await copyToClipboard(url)
     setShareToast(true)
     setTimeout(() => setShareToast(false), 2500)
@@ -773,7 +776,7 @@ function ChecklistToolInner() {
 
   const handleAdvShare = useCallback(async () => {
     const encoded = encodeAdvancedToURL(advItems)
-    const url = `${window.location.origin}/checklist?a=${encoded}`
+    const url = `${window.location.origin}/checklist?m=advanced&a=${encoded}`
     await copyToClipboard(url)
     setAdvShareToast(true)
     setTimeout(() => setAdvShareToast(false), 2500)
