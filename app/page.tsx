@@ -78,8 +78,8 @@ const tools = [
     icon: CheckSquare,
     name: 'Smart Checklist',
     description:
-      'Convert any text into an interactive checklist. Drag-and-drop reorder, 3-state toggles, PDF export, and shareable URLs.',
-    tags: ['release checklist', 'QA checklist', 'developer checklist'],
+      'Two modes in one tool. Simple mode converts any flat list instantly. Advanced mode gives you a 3-level hierarchy with nested drag-and-drop, collapse/expand, per-parent progress tracking, and shareable URLs.',
+    tags: ['release checklist', 'QA checklist', 'nested checklist'],
     featured: true,
   },
   {
@@ -500,7 +500,7 @@ export default function HomePage() {
                   <div>
                     <div className="flex items-center gap-2">
                       <h3 className="font-semibold text-lg leading-none">{featuredTool.name}</h3>
-                      <span className="inline-flex items-center rounded-full bg-foreground/10 border border-foreground/15 px-2 py-0.5 text-[10px] font-medium text-foreground/70 uppercase tracking-wide">
+                      <span className="inline-flex items-center rounded-full bg-green-500/15 border border-green-500/30 px-2 py-0.5 text-[10px] font-medium text-green-500 uppercase tracking-wide">
                         Featured
                       </span>
                     </div>
