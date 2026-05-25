@@ -541,8 +541,12 @@ function ChecklistToolInner() {
     localStorageSet(ADVANCED_TITLE_KEY, advTitle)
   }, [advTitle])
 
-  // ── Persist mode ──────────────────────────────────────────────────────────
-  useEffect(() => { localStorageSet(MODE_KEY, mode) }, [mode])
+  // ── Persist mode (skip initial render so we don't overwrite before load) ──
+  const modeLoaded = useRef(false)
+  useEffect(() => {
+    if (!modeLoaded.current) { modeLoaded.current = true; return }
+    localStorageSet(MODE_KEY, mode)
+  }, [mode])
 
   // ── Focus title inputs ────────────────────────────────────────────────────
   useEffect(() => { if (editingTitle) titleInputRef.current?.focus() }, [editingTitle])
