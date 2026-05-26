@@ -157,7 +157,7 @@ const CHECKLIST_DESTINATIONS = [
     href: '/checklist/templates',
     icon: Star,
     label: 'Templates',
-    description: '40+ ready-made checklists across 8 categories',
+    description: '60+ ready-made checklists across 16 categories',
   },
   {
     href: '/checklist/my-checklists',
@@ -179,7 +179,7 @@ const tools = [
     icon: CheckSquare,
     name: 'Smart Checklist',
     description: 'Organize tasks, workflows, and nested checklists with a fast, privacy-first checklist system.',
-    tags: ['nested tasks', 'progress tracking', 'shareable', '40+ templates', 'auto-saved'],
+    tags: ['nested tasks', 'progress tracking', 'shareable', '60+ templates', 'auto-saved'],
     featured: true,
   },
   {

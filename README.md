@@ -30,7 +30,7 @@ https://github.com/user-attachments/assets/ce40bfe3-260f-47ec-b867-24a3e925c47f
 
 | Tool | Description |
 |------|-------------|
-| [Smart Checklist](https://devtoolssuite.dev/checklist) | Two-mode checklist system — Simple mode converts any flat list instantly; Advanced mode supports 3-level nested tasks with collapse/expand, per-parent progress tracking, indent/outdent, drag-and-drop reorder within levels, PDF/Markdown/JSON/CSV export, shareable URLs that restore the original title on the recipient's end, Templates library (40+ ready-made checklists across 8 categories), and My Checklists page with IndexedDB persistence, pin, rename, duplicate, sort, and search |
+| [Smart Checklist](https://devtoolssuite.dev/checklist) | Two-mode checklist system — Simple mode converts any flat list instantly; Advanced mode supports 3-level nested tasks with collapse/expand, per-parent progress tracking, indent/outdent, drag-and-drop reorder within levels, PDF/Markdown/JSON/CSV export, shareable URLs that restore the original title on the recipient's end, Templates library (60+ ready-made checklists across 16 categories), and My Checklists page with IndexedDB persistence, pin, rename, duplicate, sort, and search |
 | [JSON Formatter](https://devtoolssuite.dev/json-formatter) | Prettify, minify, validate and explore JSON with syntax highlighting |
 | [Cron Generator](https://devtoolssuite.dev/cron-generator) | Build cron expressions visually with human-readable descriptions and next-execution previews |
 | [Diff Checker](https://devtoolssuite.dev/diff-checker) | Compare two texts side by side with line, character, and JSON-aware diff modes |
@@ -183,7 +183,7 @@ app/                        # Next.js App Router pages (one folder per tool)
     [id]/                   # Active workspace editor (saved checklist)
     workspace/              # New checklist creation page (paste or blank)
     my-checklists/          # Saved checklists list with sort, pin, rename, duplicate
-    templates/              # 40+ ready-made checklist templates across 8 categories
+    templates/              # 60+ ready-made checklist templates across 16 categories
   json-formatter/
   cron-generator/
   diff-checker/
@@ -229,7 +229,7 @@ lib/
     workspaces.ts           # createWorkspace, getWorkspace, saveWorkspace, deleteWorkspace
     metadata.ts             # Metadata store: list, filter, sort, pin, rename, duplicate
     types.ts                # Workspace, WorkspaceMetadata, WorkspaceItems types
-  checklist-templates/      # 40+ built-in templates (engineering, startup, marketing, AI, etc.)
+  checklist-templates/      # 60+ built-in templates (engineering, startup, marketing, AI, etc.)
   hooks/
     use-workspace.ts        # Load + debounced-save hook for the active workspace editor
     use-workspace-list.ts   # Sorted/filtered list hook for My Checklists page
