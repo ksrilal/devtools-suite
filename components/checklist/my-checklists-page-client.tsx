@@ -41,6 +41,11 @@ export function MyChecklistsPageClient() {
   const [renameValue, setRenameValue] = useState('')
   const [deletingId, setDeletingId] = useState<string | null>(null)
   const deletingTimer = useRef<ReturnType<typeof setTimeout> | null>(null)
+  const renameInputRef = useRef<HTMLInputElement>(null)
+
+  useEffect(() => {
+    if (renamingId) renameInputRef.current?.focus()
+  }, [renamingId])
 
   useEffect(() => {
     return () => { if (deletingTimer.current) clearTimeout(deletingTimer.current) }
@@ -182,7 +187,7 @@ export function MyChecklistsPageClient() {
                     {isRenaming ? (
                       <div className="flex items-center gap-2">
                         <input
-                          autoFocus
+                          ref={renameInputRef}
                           value={renameValue}
                           onChange={(e) => setRenameValue(e.target.value)}
                           onKeyDown={(e) => {
