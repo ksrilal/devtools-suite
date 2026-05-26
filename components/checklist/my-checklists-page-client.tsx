@@ -8,6 +8,7 @@ import {
 } from 'lucide-react'
 import { Button } from '@/components/ui/button'
 import { ChecklistSubnav } from './checklist-subnav'
+import { ChecklistAboutSection } from './checklist-about-section'
 import { useWorkspaceList } from '@/lib/hooks/use-workspace-list'
 import { filterMetadata } from '@/lib/checklist-db'
 import type { SortOrder } from '@/lib/checklist-db'
@@ -342,6 +343,7 @@ export function MyChecklistsPageClient() {
         )}
 
       </div>
+      <ChecklistAboutSection />
     </>
   )
 }

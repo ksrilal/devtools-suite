@@ -4,6 +4,7 @@ import { useState, useMemo, useCallback } from 'react'
 import { useRouter } from 'next/navigation'
 import { Search, X, Star } from 'lucide-react'
 import { ChecklistSubnav } from './checklist-subnav'
+import { ChecklistAboutSection } from './checklist-about-section'
 import { createWorkspace } from '@/lib/checklist-db'
 import {
   allTemplates,
@@ -213,6 +214,7 @@ export function TemplatesPageClient() {
         )}
 
       </div>
+      <ChecklistAboutSection />
     </>
   )
 }

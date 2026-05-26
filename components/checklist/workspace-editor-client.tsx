@@ -27,7 +27,7 @@ import {
   exportAdvancedAsPlainText, exportAdvancedAsJSON, exportAdvancedAsCSV,
 } from '@/lib/tools/checklist-advanced'
 import { useWorkspace } from '@/lib/hooks/use-workspace'
-import { deleteWorkspace, clearLastActiveWorkspaceId, setLastActiveWorkspaceId } from '@/lib/checklist-db'
+import { deleteWorkspace, clearLastActiveWorkspaceId, setLastActiveWorkspaceId, createWorkspace } from '@/lib/checklist-db'
 import { copyToClipboard, downloadFile } from '@/lib/utils'
 import { ChecklistSubnav } from './checklist-subnav'
 import { ChecklistAboutSection } from './checklist-about-section'
@@ -301,6 +301,31 @@ function WorkspaceEditorInner({ id }: { id: string }) {
     setLastActiveWorkspaceId(workspace.id)
   }, [workspace])
 
+  // When workspace not found but share params exist, create a new workspace from URL data
+  useEffect(() => {
+    if (loading || workspace) return
+    const urlC = searchParams.get('c')
+    const urlA = searchParams.get('a')
+    const rawTitle = searchParams.get('t')
+    const sharedTitle = rawTitle ? `${decodeURIComponent(rawTitle)} - Shared` : 'Shared Checklist'
+    if (urlC) {
+      const decoded = decodeChecklistFromURL(urlC)
+      if (decoded?.length) {
+        createWorkspace(sharedTitle, 'simple', decoded).then((ws) => {
+          router.replace(`/checklist/${ws.id}`)
+        }).catch(() => {})
+      }
+    } else if (urlA) {
+      const decoded = decodeAdvancedFromURL(urlA)
+      if (decoded?.length) {
+        createWorkspace(sharedTitle, 'advanced', decoded).then((ws) => {
+          router.replace(`/checklist/${ws.id}`)
+        }).catch(() => {})
+      }
+    }
+  // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [loading, workspace])
+
   // Handle URL share params (c= and a=) — only after workspace is hydrated so updateItems has a target
   useEffect(() => {
     if (!mounted) return
@@ -382,11 +407,12 @@ function WorkspaceEditorInner({ id }: { id: string }) {
 
   const handleShare = useCallback(async () => {
     const encoded = encodeChecklistToURL(items)
-    const url = `${window.location.origin}/checklist/${id}?c=${encoded}`
+    const t = encodeURIComponent(title)
+    const url = `${window.location.origin}/checklist/${id}?c=${encoded}&t=${t}`
     await copyToClipboard(url)
     setShareToast(true)
     setTimeout(() => setShareToast(false), 2500)
-  }, [items, id])
+  }, [items, id, title])
 
   const handleExport = useCallback(async (format: ExportFormat) => {
     const slug = (title || 'checklist').toLowerCase().replace(/\s+/g, '-').replace(/[^a-z0-9-]/g, '')
@@ -404,10 +430,25 @@ function WorkspaceEditorInner({ id }: { id: string }) {
       doc.setFontSize(11); let y = 44
       for (const item of items) {
         if (y > 275) { doc.addPage(); y = 20 }
-        doc.setDrawColor(160, 160, 160); doc.setFillColor(255, 255, 255)
-        if (item.state === 'checked') { doc.setFillColor(34, 197, 94); doc.setDrawColor(34, 197, 94) }
-        else if (item.state === 'invalid') { doc.setFillColor(239, 68, 68); doc.setDrawColor(239, 68, 68) }
-        doc.roundedRect(20, y - 4, 5, 5, 0.8, 0.8, 'FD')
+        const bx = 20; const by = y - 3.5; const bs = 5
+        if (item.state === 'checked') {
+          doc.setFillColor(34, 197, 94); doc.setDrawColor(34, 197, 94)
+          doc.roundedRect(bx, by, bs, bs, 0.8, 0.8, 'FD')
+          doc.setDrawColor(255, 255, 255); doc.setLineWidth(0.7)
+          doc.line(bx + 1, by + 2.5, bx + 2.1, by + 3.7)
+          doc.line(bx + 2.1, by + 3.7, bx + 4, by + 1.3)
+          doc.setLineWidth(0.2)
+        } else if (item.state === 'invalid') {
+          doc.setFillColor(239, 68, 68); doc.setDrawColor(239, 68, 68)
+          doc.roundedRect(bx, by, bs, bs, 0.8, 0.8, 'FD')
+          doc.setDrawColor(255, 255, 255); doc.setLineWidth(0.7)
+          doc.line(bx + 1.2, by + 1.2, bx + 3.8, by + 3.8)
+          doc.line(bx + 3.8, by + 1.2, bx + 1.2, by + 3.8)
+          doc.setLineWidth(0.2)
+        } else {
+          doc.setFillColor(255, 255, 255); doc.setDrawColor(160, 160, 160)
+          doc.roundedRect(bx, by, bs, bs, 0.8, 0.8, 'FD')
+        }
         if (item.state === 'checked') doc.setTextColor(150, 150, 150)
         else if (item.state === 'invalid') doc.setTextColor(200, 80, 80)
         else doc.setTextColor(30, 30, 30)
@@ -483,11 +524,12 @@ function WorkspaceEditorInner({ id }: { id: string }) {
 
   const handleAdvShare = useCallback(async () => {
     const encoded = encodeAdvancedToURL(advItems)
-    const url = `${window.location.origin}/checklist/${id}?a=${encoded}`
+    const t = encodeURIComponent(title)
+    const url = `${window.location.origin}/checklist/${id}?a=${encoded}&t=${t}`
     await copyToClipboard(url)
     setAdvShareToast(true)
     setTimeout(() => setAdvShareToast(false), 2500)
-  }, [advItems, id])
+  }, [advItems, id, title])
 
   const handleAdvExport = useCallback(async (format: AdvancedExportFormat) => {
     const slug = (title || 'checklist').toLowerCase().replace(/\s+/g, '-').replace(/[^a-z0-9-]/g, '')
@@ -506,15 +548,29 @@ function WorkspaceEditorInner({ id }: { id: string }) {
       doc.setFontSize(11); let y = 44
       for (const item of advItems) {
         if (y > 275) { doc.addPage(); y = 20 }
-        const indentX = 20 + item.depth * 8
-        doc.setDrawColor(160, 160, 160); doc.setFillColor(255, 255, 255)
-        if (item.state === 'checked') { doc.setFillColor(34, 197, 94); doc.setDrawColor(34, 197, 94) }
-        else if (item.state === 'invalid') { doc.setFillColor(239, 68, 68); doc.setDrawColor(239, 68, 68) }
-        doc.roundedRect(indentX, y - 4, 5, 5, 0.8, 0.8, 'FD')
+        const bx = 20 + item.depth * 8; const by = y - 3.5; const bs = 5
+        if (item.state === 'checked') {
+          doc.setFillColor(34, 197, 94); doc.setDrawColor(34, 197, 94)
+          doc.roundedRect(bx, by, bs, bs, 0.8, 0.8, 'FD')
+          doc.setDrawColor(255, 255, 255); doc.setLineWidth(0.7)
+          doc.line(bx + 1, by + 2.5, bx + 2.1, by + 3.7)
+          doc.line(bx + 2.1, by + 3.7, bx + 4, by + 1.3)
+          doc.setLineWidth(0.2)
+        } else if (item.state === 'invalid') {
+          doc.setFillColor(239, 68, 68); doc.setDrawColor(239, 68, 68)
+          doc.roundedRect(bx, by, bs, bs, 0.8, 0.8, 'FD')
+          doc.setDrawColor(255, 255, 255); doc.setLineWidth(0.7)
+          doc.line(bx + 1.2, by + 1.2, bx + 3.8, by + 3.8)
+          doc.line(bx + 3.8, by + 1.2, bx + 1.2, by + 3.8)
+          doc.setLineWidth(0.2)
+        } else {
+          doc.setFillColor(255, 255, 255); doc.setDrawColor(160, 160, 160)
+          doc.roundedRect(bx, by, bs, bs, 0.8, 0.8, 'FD')
+        }
         if (item.state === 'checked') doc.setTextColor(150, 150, 150)
         else if (item.state === 'invalid') doc.setTextColor(200, 80, 80)
         else doc.setTextColor(30, 30, 30)
-        const textX = indentX + 8
+        const textX = bx + 8
         const lines = doc.splitTextToSize(item.text, 190 - textX) as string[]
         doc.text(lines, textX, y); doc.setTextColor(0, 0, 0)
         y += Math.max(lines.length * 7, 9)
@@ -616,18 +672,25 @@ function WorkspaceEditorInner({ id }: { id: string }) {
   }
 
   if (!workspace) {
+    const hasShareParams = searchParams.get('c') || searchParams.get('a')
     return (
       <>
         <ChecklistSubnav />
-        <div className="container py-12 text-center">
-          <p className="text-muted-foreground mb-4">Checklist not found.</p>
-          <Button onClick={() => router.push('/checklist/workspace')}>New Checklist</Button>
+        <div className="container py-12 flex items-center justify-center">
+          {hasShareParams ? (
+            <div className="h-5 w-5 rounded-full border-2 border-primary border-t-transparent animate-spin" />
+          ) : (
+            <div className="text-center">
+              <p className="text-muted-foreground mb-4">Checklist not found.</p>
+              <Button onClick={() => router.push('/checklist/workspace')}>New Checklist</Button>
+            </div>
+          )}
         </div>
       </>
     )
   }
 
-  const showAbout = mounted && (mode === 'simple' ? items.length === 0 : advItems.length === 0)
+  const showAbout = true
 
   return (
     <>
