@@ -1,6 +1,6 @@
 'use client'
 
-import { useState, useMemo } from 'react'
+import { useState, useMemo, useEffect, useRef } from 'react'
 import Link from 'next/link'
 import {
   CheckSquare,
@@ -35,16 +35,151 @@ import {
   Container,
   Search,
   X,
+  Plus,
+  Star,
+  FolderOpen,
+  ChevronRight,
+  Layers,
+  Share2,
+  Download,
 } from 'lucide-react'
+
+// ─── Floating checkbox animation ─────────────────────────────────────────────
+
+type BoxMark = 'none' | 'check' | 'cross'
+interface FloatBox {
+  id: number
+  size: number      // px 14–26
+  topPct: number    // % vertically
+  leftPct: number   // % — starting X position
+  dur: number       // drift duration ms
+  markDelay: number // ms before mark pops in
+  mark: BoxMark
+}
+
+function FloatingCheckboxes() {
+  const [boxes, setBoxes] = useState<FloatBox[]>([])
+  const counter = useRef(0)
+
+  useEffect(() => {
+    const MARKS: BoxMark[] = ['check', 'check', 'cross', 'cross', 'none']
+
+    function spawn() {
+      const id = counter.current++
+      const dur = 4800 + Math.random() * 2000 // 4.8–6.8s drift
+      const box: FloatBox = {
+        id,
+        size: 14 + Math.floor(Math.random() * 14),
+        topPct: 8 + Math.random() * 72,
+        leftPct: Math.random() * 60, // start in left 0–60% so it has room to drift right
+        dur,
+        markDelay: dur * 0.25 + Math.random() * (dur * 0.35), // mark appears 25–60% into drift
+        mark: MARKS[Math.floor(Math.random() * MARKS.length)]!,
+      }
+      setBoxes((prev) => [...prev.slice(-9), box])
+      setTimeout(() => setBoxes((prev) => prev.filter((b) => b.id !== id)), dur + 400)
+    }
+
+    // initial burst — populate immediately
+    for (let i = 0; i < 5; i++) setTimeout(spawn, i * 220)
+    const iv = setInterval(spawn, 950)
+    return () => clearInterval(iv)
+  }, [])
+
+  return (
+    <div className="absolute inset-0 overflow-hidden pointer-events-none" aria-hidden="true">
+      <style>{`
+        @keyframes fb-drift {
+          from { transform: translateX(0);    opacity: 0; }
+          6%   { opacity: 1; }
+          88%  { opacity: 1; }
+          to   { transform: translateX(55vw); opacity: 0; }
+        }
+        @keyframes fb-mark {
+          from { opacity: 0; transform: scale(0.2); }
+          to   { opacity: 1; transform: scale(1); }
+        }
+        .fb-box  { position: absolute; display: flex; align-items: center; justify-content: center; border-radius: 3px; }
+        .fb-mark { animation: fb-mark 0.22s cubic-bezier(.34,1.56,.64,1) forwards; opacity: 0; }
+      `}</style>
+
+      {boxes.map((box) => {
+        const isCheck = box.mark === 'check'
+        const isCross = box.mark === 'cross'
+        const border = isCheck ? '#22c55e' : isCross ? '#ef4444' : 'rgba(200,210,220,0.75)'
+        const bg     = isCheck ? 'rgba(34,197,94,0.13)' : isCross ? 'rgba(239,68,68,0.11)' : 'rgba(200,210,220,0.06)'
+        return (
+          <div
+            key={box.id}
+            className="fb-box"
+            style={{
+              top:    `${box.topPct}%`,
+              left:   `${box.leftPct}%`,
+              width:  box.size,
+              height: box.size,
+              border: `1.5px solid ${border}`,
+              background: bg,
+              animation: `fb-drift ${box.dur}ms linear forwards`,
+            }}
+          >
+            {box.mark !== 'none' && (
+              <span className="fb-mark" style={{ animationDelay: `${box.markDelay}ms` }}>
+                {isCheck ? (
+                  <svg viewBox="0 0 10 10" fill="none" stroke="#22c55e" strokeWidth="2.2"
+                    strokeLinecap="round" strokeLinejoin="round"
+                    style={{ width: box.size * 0.6, height: box.size * 0.6 }}>
+                    <polyline points="1.5,5 4,7.5 8.5,2.5" />
+                  </svg>
+                ) : (
+                  <svg viewBox="0 0 10 10" fill="none" stroke="#ef4444" strokeWidth="2.2"
+                    strokeLinecap="round"
+                    style={{ width: box.size * 0.6, height: box.size * 0.6 }}>
+                    <line x1="2" y1="2" x2="8" y2="8" /><line x1="8" y1="2" x2="2" y2="8" />
+                  </svg>
+                )}
+              </span>
+            )}
+          </div>
+        )
+      })}
+    </div>
+  )
+}
+
+const CHECKLIST_DESTINATIONS = [
+  {
+    href: '/checklist/workspace',
+    icon: Plus,
+    label: 'New Workspace',
+    description: 'Paste any list or start blank — simple or nested',
+  },
+  {
+    href: '/checklist/templates',
+    icon: Star,
+    label: 'Templates',
+    description: '40+ ready-made checklists across 8 categories',
+  },
+  {
+    href: '/checklist/my-checklists',
+    icon: FolderOpen,
+    label: 'My Checklists',
+    description: 'Your saved checklists — pin, rename, duplicate',
+  },
+]
+
+const CHECKLIST_HIGHLIGHTS = [
+  { icon: Layers,   text: 'Simple & Advanced modes — flat list or 3-level nested hierarchy' },
+  { icon: Share2,   text: 'Shareable URLs — recipients get a named copy instantly' },
+  { icon: Download, text: 'Export to PDF, Markdown, JSON, CSV, or plain text' },
+]
 
 const tools = [
   {
     href: '/checklist',
     icon: CheckSquare,
     name: 'Smart Checklist',
-    description: 'Organize complex tasks, workflows, and nested checklists with a fast, privacy-first checklist system.',
-    secondary: 'Supports nested tasks, progress tracking, drag-and-drop organization, and shareable checklists.',
-    tags: ['workflow planning', 'nested checklists', 'progress tracking', 'offline ready'],
+    description: 'Organize tasks, workflows, and nested checklists with a fast, privacy-first checklist system.',
+    tags: ['nested tasks', 'progress tracking', 'shareable', '40+ templates', 'auto-saved'],
     featured: true,
   },
   {
@@ -328,42 +463,47 @@ export function ToolsGrid() {
         </p>
       ) : (
         <div className="grid gap-4 sm:grid-cols-2 lg:grid-cols-3">
-          {/* Featured card */}
+          {/* Featured card — split layout */}
           {showFeatured && (
-            <Link
-              href={featuredTool.href}
-              className="group relative sm:col-span-2 lg:col-span-2 rounded-xl border border-green-500/20 bg-card p-6 md:p-8 transition-all duration-300 hover:border-green-500/40 hover:-translate-y-0.5 motion-safe:hover:-translate-y-0.5 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring overflow-hidden"
-            >
-              <div className="pointer-events-none absolute inset-0 rounded-xl bg-gradient-to-br from-green-500/5 via-transparent to-transparent opacity-0 group-hover:opacity-100 transition-opacity duration-300" aria-hidden="true" />
+            <div className="relative sm:col-span-2 lg:col-span-2 rounded-xl border border-green-500/20 bg-card overflow-hidden">
+              {/* Subtle gradient wash */}
+              <div className="pointer-events-none absolute inset-0 bg-gradient-to-br from-green-500/[0.04] via-transparent to-transparent" aria-hidden="true" />
 
-              <div className="flex items-start justify-between gap-4 mb-4">
-                <div className="flex items-center gap-3">
-                  <div className="p-2.5 rounded-lg bg-green-500/10 border border-green-500/20 text-green-500 group-hover:bg-green-500/15 transition-colors">
-                    <featuredTool.icon className="h-5 w-5" aria-hidden="true" />
-                  </div>
-                  <div className="flex items-center gap-2">
-                    <h3 className="font-semibold text-lg leading-none">{featuredTool.name}</h3>
-                    <span className="inline-flex items-center rounded-full bg-green-500/15 border border-green-500/30 px-2 py-0.5 text-[10px] font-medium text-green-500 uppercase tracking-wide">
-                      Featured
-                    </span>
-                  </div>
+              {/* Header row */}
+              <div className="relative flex items-center gap-3 px-6 pt-6 pb-5 border-b border-green-500/10 overflow-hidden">
+                {/* Floating checkboxes — absolute, spans full header */}
+                <div className="hidden sm:block absolute inset-0 pointer-events-none" aria-hidden="true">
+                  <FloatingCheckboxes />
                 </div>
-                <span className="shrink-0 inline-flex items-center gap-1 text-xs text-muted-foreground group-hover:text-foreground transition-colors">
-                  Open <ArrowRight className="h-3.5 w-3.5 transition-transform duration-200 group-hover:translate-x-0.5" aria-hidden="true" />
-                </span>
+
+                <div className="relative z-10 p-2.5 rounded-lg bg-green-500/10 border border-green-500/20 text-green-500">
+                  <featuredTool.icon className="h-5 w-5" aria-hidden="true" />
+                </div>
+                <div className="relative z-10 flex items-center gap-2">
+                  <h3 className="font-semibold text-lg leading-none">{featuredTool.name}</h3>
+                  <span className="inline-flex items-center rounded-full bg-green-500/15 border border-green-500/30 px-2 py-0.5 text-[10px] font-medium text-green-500 uppercase tracking-wide">
+                    Featured
+                  </span>
+                </div>
               </div>
 
-              <div className="flex flex-col sm:flex-row gap-8 items-start">
-                <div className="flex-1 min-w-0">
-                  <p className="text-sm text-foreground/80 leading-relaxed mb-1.5 max-w-lg font-medium">
+              {/* Body — split */}
+              <div className="flex flex-col sm:flex-row">
+
+                {/* Left: description + highlights + tags */}
+                <div className="flex-1 min-w-0 px-6 py-5">
+                  <p className="text-sm text-foreground/80 leading-relaxed mb-4 font-medium">
                     {featuredTool.description}
                   </p>
-                  {featuredTool.secondary && (
-                    <p className="text-xs text-muted-foreground leading-relaxed mb-5 max-w-lg">
-                      {featuredTool.secondary}
-                    </p>
-                  )}
-                  <div className="flex flex-wrap gap-2">
+                  <ul className="space-y-2 mb-5">
+                    {CHECKLIST_HIGHLIGHTS.map(({ icon: Icon, text }) => (
+                      <li key={text} className="flex items-start gap-2 text-xs text-muted-foreground">
+                        <Icon className="h-3.5 w-3.5 shrink-0 mt-0.5 text-green-500/70" aria-hidden="true" />
+                        {text}
+                      </li>
+                    ))}
+                  </ul>
+                  <div className="flex flex-wrap gap-1.5">
                     {featuredTool.tags.map((tag) => (
                       <span key={tag} className="px-2.5 py-1 rounded-md text-xs border border-green-500/20 text-green-600 dark:text-green-400 bg-green-500/5">
                         {tag}
@@ -372,39 +512,37 @@ export function ToolsGrid() {
                   </div>
                 </div>
 
-                {/* Mini nested checklist preview */}
-                <div className="shrink-0 hidden sm:flex flex-col gap-1.5 rounded-lg border border-border/40 bg-muted/20 px-4 py-3.5 w-56 self-stretch justify-center" aria-hidden="true">
-                  {[
-                    { label: 'Q3 Planning',      depth: 0, done: true  },
-                    { label: 'Set priorities',   depth: 1, done: true  },
-                    { label: 'Assign owners',    depth: 1, done: true  },
-                    { label: 'Launch campaign',  depth: 0, done: false },
-                    { label: 'Review assets',    depth: 1, done: false },
-                    { label: 'Schedule publish', depth: 1, done: false },
-                  ].map((item, i) => (
-                    <div key={i} className="flex items-center gap-1.5" style={{ paddingLeft: item.depth * 14 }}>
-                      <div className={`h-3 w-3 rounded-sm border shrink-0 flex items-center justify-center ${item.done ? 'bg-green-500 border-green-500' : 'border-border/60 bg-transparent'}`}>
-                        {item.done && (
-                          <svg viewBox="0 0 10 10" className="h-2 w-2 text-white" fill="none" stroke="currentColor" strokeWidth="2">
-                            <polyline points="1.5,5 4,7.5 8.5,2" />
-                          </svg>
-                        )}
+                {/* Divider */}
+                <div className="hidden sm:block w-px bg-green-500/10" />
+                <div className="block sm:hidden h-px bg-green-500/10 mx-6" />
+
+                {/* Right: 3 destination links */}
+                <div className="shrink-0 flex flex-col divide-y divide-green-500/10 w-64">
+                  {CHECKLIST_DESTINATIONS.map(({ href, icon: Icon, label, description }) => (
+                    <Link
+                      key={href}
+                      href={href}
+                      className="group/dest relative flex items-center gap-3 px-5 py-4 hover:bg-green-500/5 transition-colors focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-inset focus-visible:ring-ring"
+                    >
+                      {/* Left-side popover — appears over the left content, never shifts layout */}
+                      <span className="pointer-events-none absolute right-[calc(100%+6px)] top-1/2 -translate-y-1/2 z-30 whitespace-nowrap rounded-md border border-green-500/20 bg-card/95 px-3 py-1.5 text-[11px] text-green-400 shadow-lg backdrop-blur-sm opacity-0 -translate-x-1 group-hover/dest:opacity-100 group-hover/dest:translate-x-0 transition-all duration-200">
+                        {description}
+                      </span>
+
+                      <div className="p-1.5 rounded-md bg-green-500/10 border border-green-500/15 text-green-500 shrink-0 group-hover/dest:bg-green-500/20 transition-colors">
+                        <Icon className="h-3.5 w-3.5" aria-hidden="true" />
                       </div>
-                      <span className={`text-[10px] truncate ${item.done ? 'text-muted-foreground/40 line-through' : 'text-foreground/60'}`}>{item.label}</span>
-                    </div>
+                      <div className="flex-1 min-w-0">
+                        <p className="text-sm font-medium leading-none transition-all duration-200 mb-0.5 group-hover/dest:mb-0 group-hover/dest:translate-y-[7px]">{label}</p>
+                        <p className="text-[11px] text-muted-foreground leading-snug truncate transition-opacity duration-150 group-hover/dest:opacity-0">{description}</p>
+                      </div>
+                      <ChevronRight className="h-3.5 w-3.5 text-muted-foreground/30 group-hover/dest:text-green-500/60 group-hover/dest:translate-x-0.5 transition-all shrink-0" aria-hidden="true" />
+                    </Link>
                   ))}
-                  <div className="mt-2 pt-2 border-t border-border/30">
-                    <div className="flex items-center justify-between mb-1">
-                      <span className="text-[9px] text-muted-foreground/40">3 of 6 done</span>
-                      <span className="text-[9px] text-green-500/70 font-medium">50%</span>
-                    </div>
-                    <div className="h-0.5 w-full rounded-full bg-border/40 overflow-hidden">
-                      <div className="h-full w-1/2 rounded-full bg-green-500/60 transition-all duration-500" />
-                    </div>
-                  </div>
                 </div>
+
               </div>
-            </Link>
+            </div>
           )}
 
           {/* Regular cards */}
