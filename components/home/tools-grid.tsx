@@ -74,7 +74,7 @@ function FloatingCheckboxes() {
         leftPct: Math.random() * 60, // start in left 0–60% so it has room to drift right
         dur,
         markDelay: dur * 0.25 + Math.random() * (dur * 0.35), // mark appears 25–60% into drift
-        mark: MARKS[Math.floor(Math.random() * MARKS.length)]!,
+        mark: MARKS[Math.floor(Math.random() * MARKS.length)] ?? 'none',
       }
       setBoxes((prev) => [...prev.slice(-9), box])
       setTimeout(() => setBoxes((prev) => prev.filter((b) => b.id !== id)), dur + 400)
