@@ -30,7 +30,7 @@ https://github.com/user-attachments/assets/ce40bfe3-260f-47ec-b867-24a3e925c47f
 
 | Tool | Description |
 |------|-------------|
-| [Smart Checklist](https://devtoolssuite.dev/checklist) | Two-mode checklist system — Simple mode converts any flat list instantly; Advanced mode supports 3-level nested tasks with collapse/expand, per-parent progress tracking, indent/outdent, drag-and-drop reorder within levels, PDF/Markdown/JSON/CSV export, and shareable URLs with mode preserved |
+| [Smart Checklist](https://devtoolssuite.dev/checklist) | Two-mode checklist system — Simple mode converts any flat list instantly; Advanced mode supports 3-level nested tasks with collapse/expand, per-parent progress tracking, indent/outdent, drag-and-drop reorder within levels, PDF/Markdown/JSON/CSV export, shareable URLs that restore the original title on the recipient's end, Templates library (60+ ready-made checklists across 16 categories), and My Checklists page with IndexedDB persistence, pin, rename, duplicate, sort, and search |
 | [JSON Formatter](https://devtoolssuite.dev/json-formatter) | Prettify, minify, validate and explore JSON with syntax highlighting |
 | [Cron Generator](https://devtoolssuite.dev/cron-generator) | Build cron expressions visually with human-readable descriptions and next-execution previews |
 | [Diff Checker](https://devtoolssuite.dev/diff-checker) | Compare two texts side by side with line, character, and JSON-aware diff modes |
@@ -105,7 +105,7 @@ All specs live in [`specs/001-devtools-suite-platform/`](specs/001-devtools-suit
 | Zero backend | Privacy guarantee — no server ever receives user data |
 | Browser-native Web Crypto API | SHA hashing without a backend or heavy library |
 | Dynamic imports for heavy libs | `bcryptjs`, `js-yaml`, `papaparse`, `qrcode` loaded only when the tool is used |
-| `localStorage` only | Persistence without accounts or databases |
+| `localStorage` + IndexedDB | `localStorage` for tool-level state (sort prefs, last active); IndexedDB via `idb` for full checklist workspace persistence |
 | `display:none` AdSlot collapse | Keeps `<ins>` in DOM for AdSense while hiding unfilled slots |
 | dnd-kit for drag-and-drop | Accessible, pointer + touch + keyboard sensor support |
 | Plain `<script>` in `<head>` for AdSense | `next/script strategy="afterInteractive"` moves to body, breaking AdSense crawler verification |
@@ -114,8 +114,13 @@ All specs live in [`specs/001-devtools-suite-platform/`](specs/001-devtools-suit
 | Flat array with `parentId` + `depth` for advanced checklist | Simpler dnd-kit integration than a recursive tree; `descendantsOf()` + `visibleItems()` handle collapse and cascade |
 | Sibling-block reorder strategy | DnD moves item + entire descendant subtree as one atomic block using `arrayMove` on sibling groups |
 | Ancestor state sync after toggle | After any item toggle, walk up `parentId` chain and derive each parent's state from its children's states |
-| `mounted` guard for mode hydration | Server renders `'simple'`, `useEffect` reads localStorage; `mounted` flag prevents hydration mismatch |
-| `?m=` param in share URL | Encodes active mode (simple/advanced) alongside checklist data so recipients open the correct view |
+| `mounted` guard for mode hydration | Server renders `'simple'`, `useEffect` reads IndexedDB; `mounted` flag prevents hydration mismatch |
+| `?c=` / `?a=` + `&t=` share params | `c=` encodes simple items, `a=` encodes advanced items (LZString), `t=` carries the original title; recipients auto-create a workspace titled `"<original> - Shared"` |
+| Create-from-URL fallback | When a shared URL's workspace ID is not in the recipient's IndexedDB, a new workspace is created from the URL params and `router.replace`d to its new ID — no "not found" shown for valid share links |
+| IndexedDB via `idb` for checklist persistence | Two stores: `workspaces` (full data) and `metadata` (title, counts, pinned) — metadata store enables fast list rendering without loading full item arrays |
+| 800 ms debounced save with `beforeunload` flush | Avoids per-keystroke writes while still attempting a final save on page close |
+| `ref`-tracked confirmation timers | Double-click-to-confirm destructive actions use `useRef<ReturnType<typeof setTimeout>>` + `useEffect` cleanup to prevent `setState` on unmounted components |
+| jsPDF line-drawing for checkbox icons | jsPDF cannot render SVG; tick (✓) and cross (✗) marks are drawn with `doc.line()` calls over coloured `roundedRect` backgrounds |
 
 ---
 
@@ -136,6 +141,7 @@ All specs live in [`specs/001-devtools-suite-platform/`](specs/001-devtools-suit
 - [shadcn/ui](https://ui.shadcn.com) — accessible component primitives
 - [@dnd-kit](https://dndkit.com) — drag-and-drop for the checklist (simple + advanced modes)
 - [lz-string](https://github.com/pieroxy/lz-string) — LZString compression for checklist share URLs
+- [idb](https://github.com/jakearchibald/idb) — Promise-based IndexedDB wrapper for checklist workspace persistence
 - [jspdf](https://github.com/parallax/jsPDF) — client-side PDF export for both checklist modes
 - [js-yaml](https://github.com/nodeca/js-yaml) — YAML parsing and formatting
 - [bcryptjs](https://github.com/dcodeIO/bcrypt.js) — browser-compatible bcrypt hashing
@@ -174,6 +180,10 @@ NEXT_PUBLIC_GA_MEASUREMENT_ID=    # Google Analytics 4 measurement ID
 ```
 app/                        # Next.js App Router pages (one folder per tool)
   checklist/
+    [id]/                   # Active workspace editor (saved checklist)
+    workspace/              # New checklist creation page (paste or blank)
+    my-checklists/          # Saved checklists list with sort, pin, rename, duplicate
+    templates/              # 60+ ready-made checklist templates across 16 categories
   json-formatter/
   cron-generator/
   diff-checker/
@@ -214,6 +224,15 @@ lib/
   tools/                    # Core tool logic (pure functions, no React)
     checklist.ts            # Simple mode: parse, state transitions, encode/decode, export
     checklist-advanced.ts   # Advanced mode: nested tree utilities, indent/outdent, progress, encode/decode, export
+  checklist-db/             # IndexedDB persistence layer (idb)
+    db.ts                   # DB initialisation, store definitions, schema migrations
+    workspaces.ts           # createWorkspace, getWorkspace, saveWorkspace, deleteWorkspace
+    metadata.ts             # Metadata store: list, filter, sort, pin, rename, duplicate
+    types.ts                # Workspace, WorkspaceMetadata, WorkspaceItems types
+  checklist-templates/      # 60+ built-in templates (engineering, startup, marketing, AI, etc.)
+  hooks/
+    use-workspace.ts        # Load + debounced-save hook for the active workspace editor
+    use-workspace-list.ts   # Sorted/filtered list hook for My Checklists page
   seo/                      # Metadata helpers (toolMetadata, webApplicationLD, faqPageLD)
 ```
 

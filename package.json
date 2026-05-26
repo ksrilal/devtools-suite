@@ -41,6 +41,7 @@
     "cronstrue": "^3.14.0",
     "diff": "^9.0.0",
     "fast-xml-parser": "^5.8.0",
+    "idb": "^8.0.3",
     "js-yaml": "^4.1.1",
     "jspdf": "^4.2.1",
     "lucide-react": "^0.460.0",

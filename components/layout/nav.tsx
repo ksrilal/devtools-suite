@@ -49,6 +49,11 @@ const mid = Math.ceil(tools.length / 2)
 const row1 = tools.slice(0, mid)
 const row2 = tools.slice(mid)
 
+function isToolActive(href: string, pathname: string): boolean {
+  if (href === '/checklist') return pathname === '/checklist' || pathname.startsWith('/checklist/')
+  return pathname === href
+}
+
 function NavLink({ t, pathname }: { t: typeof tools[number]; pathname: string }) {
   return (
     <Tooltip.Root>
@@ -57,7 +62,7 @@ function NavLink({ t, pathname }: { t: typeof tools[number]; pathname: string })
           href={t.href}
           className={cn(
             'px-2.5 py-1 rounded-md transition-all whitespace-nowrap leading-none',
-            pathname === t.href
+            isToolActive(t.href, pathname)
               ? 'bg-accent text-accent-foreground text-sm font-semibold'
               : 'text-[13px] text-muted-foreground hover:text-foreground hover:bg-accent/60'
           )}
@@ -105,7 +110,7 @@ export function Nav() {
 
           {/* Active tool — vertically centered like the logo, shown only when a tool is active */}
           {(() => {
-            const active = tools.find((t) => t.href === pathname)
+            const active = tools.find((t) => isToolActive(t.href, pathname))
             if (!active) return null
             return (
               <div className="flex items-center pr-3 mr-1 border-r border-border/40 shrink-0">
@@ -119,10 +124,10 @@ export function Nav() {
           {/* Two-row tool nav — inactive items only */}
           <nav className="flex-1 flex flex-col justify-center py-1.5 gap-0.5 min-w-0" aria-label="Main navigation">
             <div className="flex items-center justify-between">
-              {row1.filter((t) => t.href !== pathname).map((t) => <NavLink key={t.href} t={t} pathname={pathname} />)}
+              {row1.filter((t) => !isToolActive(t.href, pathname)).map((t) => <NavLink key={t.href} t={t} pathname={pathname} />)}
             </div>
             <div className="flex items-center justify-between">
-              {row2.filter((t) => t.href !== pathname).map((t) => <NavLink key={t.href} t={t} pathname={pathname} />)}
+              {row2.filter((t) => !isToolActive(t.href, pathname)).map((t) => <NavLink key={t.href} t={t} pathname={pathname} />)}
             </div>
           </nav>
 
@@ -181,7 +186,7 @@ export function Nav() {
                 onClick={() => setMobileOpen(false)}
                 className={cn(
                   'px-2 py-2 text-xs rounded-md transition-colors text-center',
-                  pathname === t.href
+                  isToolActive(t.href, pathname)
                     ? 'bg-accent text-accent-foreground font-medium'
                     : 'text-muted-foreground hover:text-foreground hover:bg-accent/60'
                 )}

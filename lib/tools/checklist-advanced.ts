@@ -386,10 +386,10 @@ export function exportAdvancedAsJSON(items: AdvancedItem[]): string {
 }
 
 export function exportAdvancedAsCSV(items: AdvancedItem[]): string {
-  const header = 'text,state,depth,parentId'
+  const header = 'id,text,state,depth,parentId'
   const rows = items.map(
     (i) =>
-      `"${i.text.replace(/"/g, '""')}","${i.state}",${i.depth},"${i.parentId ?? ''}"`
+      `"${i.id}","${i.text.replace(/"/g, '""')}","${i.state}",${i.depth},"${i.parentId ?? ''}"`
   )
   return [header, ...rows].join('\n')
 }

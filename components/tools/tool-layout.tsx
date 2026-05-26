@@ -25,7 +25,7 @@ export function ToolLayout({ children, sidebar, className, bare }: ToolLayoutPro
 
 interface ToolHeaderProps {
   title: string
-  description: string
+  description?: string
   toolbar?: ReactNode
 }
 
@@ -35,7 +35,7 @@ export function ToolHeader({ title, description, toolbar }: ToolHeaderProps) {
       <div className="flex items-start justify-between gap-4 flex-wrap">
         <div>
           <h1 className="text-2xl font-bold tracking-tight">{title}</h1>
-          <p className="text-muted-foreground mt-1">{description}</p>
+          {description && <p className="text-muted-foreground mt-1">{description}</p>}
         </div>
         {toolbar && <div className="flex items-center gap-2 flex-wrap">{toolbar}</div>}
       </div>
