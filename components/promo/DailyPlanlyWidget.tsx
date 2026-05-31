@@ -145,8 +145,8 @@ export default function DailyPlanlyWidget(): JSX.Element | null {
             <div className="w-72 rounded-2xl backdrop-blur-md bg-gradient-to-br from-[#1e1b4b]/95 via-[#6d28d9]/80 to-[#a855f7]/40 border border-purple-600/20 shadow-[0_16px_40px_rgba(168,85,247,0.22)] ring-1 ring-purple-400/10 overflow-hidden">
             <div className="flex items-center justify-between px-4 py-3">
               <div className="flex items-center gap-3">
-                <div className="rounded-full bg-gradient-to-br from-[#2b235a] to-[#5b21b6] p-1">
-                  <Logo className="h-7 w-7" />
+                <div className="rounded-full bg-gradient-to-br from-[#2b235a] to-[#5b21b6] p-1 overflow-hidden">
+                  <img src="/dailyplanly.png" alt="DailyPlanly" className="h-7 w-7 object-cover block" />
                 </div>
                 <div>
                   <div className="text-sm font-semibold text-[#e9d5ff]">DailyPlanly</div>
@@ -211,23 +211,23 @@ export default function DailyPlanlyWidget(): JSX.Element | null {
           <button
             onClick={() => openPanel()}
             aria-label="Open DailyPlanly panel"
-            className="absolute right-0 flex items-center justify-center h-40 w-14 rounded-full bg-gradient-to-b from-[#7c3aed] via-[#8b5cf6] to-[#a855f7] shadow-[0_14px_40px_rgba(124,58,237,0.22)] border border-purple-600/40 transition-all duration-200 overflow-visible z-50 pointer-events-auto"
+            className="absolute right-0 flex items-center justify-center h-36 w-10 rounded-full bg-gradient-to-b from-[#7c3aed] via-[#8b5cf6] to-[#a855f7] shadow-[0_14px_40px_rgba(124,58,237,0.22)] border border-purple-600/40 transition-all duration-200 overflow-visible z-50 pointer-events-auto"
             style={{ top: 0 }}
             data-expanded={expanded}
             data-pill-animating={pillAnimatingOut}
           >
-            <div className="absolute -right-4 top-6 w-5 h-16 rounded-full bg-gradient-to-b from-[#7c3aed] to-[#a855f7] opacity-10 blur-lg pointer-events-none" />
+            <div className="absolute -right-4 top-6 w-4 h-16 rounded-full bg-gradient-to-b from-[#7c3aed] to-[#a855f7] opacity-10 blur-lg pointer-events-none" />
 
-            <div className="mr-3 p-3 rounded-full bg-white/6 ring-1 ring-white/6">
+            <div className="mr-3 p-3 rounded-full bg-white/6 ring-1 ring-white/6 overflow-hidden">
               <div className="rounded-full bg-white/10 p-3">
-                <Logo className="h-8 w-8 text-white" />
+                <img src="/dailyplanly.png" alt="DailyPlanly" className="h-8 w-8 object-cover block" />
               </div>
             </div>
 
             <div className="flex-1 flex items-center justify-center w-full">
               <div
                 className="text-white text-sm font-semibold tracking-wider text-center drop-shadow-md leading-tight whitespace-nowrap transform -rotate-90 origin-center"
-                style={{ marginRight: '3rem' }}
+                style={{ marginRight: '4rem' }}
               >
                 DailyPlanly
               </div>
