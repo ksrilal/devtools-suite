@@ -6,6 +6,7 @@ import { SpeedInsights } from '@vercel/speed-insights/next'
 import { ThemeProvider } from '@/components/layout/theme-provider'
 import { Nav } from '@/components/layout/nav'
 import { Footer } from '@/components/layout/footer'
+import DailyPlanlyWidget from '@/components/promo/DailyPlanlyWidget'
 import './globals.css'
 
 const inter = Inter({ subsets: ['latin'], variable: '--font-inter' })
@@ -76,6 +77,7 @@ export default function RootLayout({ children }: { children: React.ReactNode }) 
           <Nav />
           <main className="flex-1">{children}</main>
           <Footer />
+          <DailyPlanlyWidget />
         </ThemeProvider>
 
         {gaMeasurementId && (

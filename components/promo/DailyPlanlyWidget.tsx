@@ -242,12 +242,12 @@ export default function DailyPlanlyWidget(): JSX.Element | null {
 
             {/* Top: Logo */}
             <div className="flex items-center justify-center">
-              <div className="rounded-full bg-white/6 ring-1 ring-white/6 p-2 flex items-center justify-center overflow-hidden">
-                <div className="rounded-full bg-white/10 p-1 flex items-center justify-center">
+              <div className="rounded-full bg-white/6 ring-1 ring-white/6 p-1 flex items-center justify-center overflow-hidden">
+                <div className="rounded-full bg-white/10 mb-1 flex items-center justify-center">
                   <img
                     src="/dailyplanly.png"
                     alt="DailyPlanly"
-                    className="h-6 w-6 rounded-full object-cover"
+                    className="h-8 w-8 rounded-full object-cover"
                   />
                 </div>
               </div>
@@ -258,11 +258,6 @@ export default function DailyPlanlyWidget(): JSX.Element | null {
               <div className="text-white text-xs font-semibold tracking-wider whitespace-nowrap drop-shadow-md transform -rotate-90">
                 DailyPlanly
               </div>
-            </div>
-
-            {/* Bottom: Chevron */}
-            <div className="flex items-center justify-center text-white/90">
-              <ChevronRight className="w-4 h-4 transform rotate-90" />
             </div>
           </button>
         )}
