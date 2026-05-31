@@ -54,6 +54,15 @@ export function Footer() {
             <p className="text-sm text-muted-foreground leading-relaxed">
               Free browser-based tools built for developers. No login, no uploads, no tracking.
             </p>
+
+            {/* DailyPlanly promo*/ }
+            <Link href="https://dailyplanly.com" className="inline-flex items-center mt-10 font-semibold mb-3 hover:opacity-80 transition-opacity">
+              <Image src="/dailyplanly.png" alt="" width={22} height={22} className="rounded-sm object-cover shrink-0" />
+              <span style={{ background: 'linear-gradient(180deg, #7c3aed, #a855f7)', WebkitBackgroundClip: 'text', WebkitTextFillColor: 'transparent' }}>Daily</span>Planly
+            </Link>
+            <p className="text-sm text-muted-foreground leading-relaxed">
+              Explore your calm, printable-first productivity platform.
+            </p>
           </div>
 
           {/* Tools block — heading above, 4 columns below */}
