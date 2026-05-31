@@ -6,6 +6,7 @@ import { SpeedInsights } from '@vercel/speed-insights/next'
 import { ThemeProvider } from '@/components/layout/theme-provider'
 import { Nav } from '@/components/layout/nav'
 import { Footer } from '@/components/layout/footer'
+import DailyPlanlyWidget from '@/components/promo/DailyPlanlyWidget'
 import './globals.css'
 
 const inter = Inter({ subsets: ['latin'], variable: '--font-inter' })
@@ -22,6 +23,11 @@ export const metadata: Metadata = {
   authors: [{ name: 'DevTools Suite', url: 'https://devtoolssuite.dev' }],
   creator: 'DevTools Suite',
   publisher: 'DevTools Suite',
+  icons: {
+    icon: '/icon.png',
+    apple: '/apple-icon.png',
+    shortcut: '/icon.png',
+  },
   openGraph: {
     type: 'website',
     siteName: 'DevTools Suite',
@@ -52,6 +58,8 @@ export default function RootLayout({ children }: { children: React.ReactNode }) 
   return (
     <html lang="en" suppressHydrationWarning>
       <head>
+        <link rel="icon" href="/icon.png" type="image/png" />
+        <link rel="apple-touch-icon" href="/apple-icon.png" />
         <script
           dangerouslySetInnerHTML={{
             __html: `(function(){try{var t=localStorage.getItem('devtools_theme');if(t==='light'){document.documentElement.classList.remove('dark')}else if(t==='dark'||!t){if(!t&&window.matchMedia('(prefers-color-scheme: light)').matches){document.documentElement.classList.remove('dark')}else{document.documentElement.classList.add('dark')}}}catch(e){document.documentElement.classList.add('dark')}})();(function(){if(new URLSearchParams(location.search).get('embed')==='1')document.documentElement.setAttribute('data-embed','1')})()`,
@@ -69,6 +77,7 @@ export default function RootLayout({ children }: { children: React.ReactNode }) 
           <Nav />
           <main className="flex-1">{children}</main>
           <Footer />
+          <DailyPlanlyWidget />
         </ThemeProvider>
 
         {gaMeasurementId && (

@@ -173,7 +173,8 @@ function SortableItem({ item, onToggle, onDelete, onEdit, isFiltered }: Sortable
       ) : (
         <span
           onDoubleClick={() => { setDraft(item.text); setEditing(true) }}
-          className={`flex-1 text-sm cursor-default ${
+          title={item.text}
+          className={`flex-1 text-sm cursor-default truncate ${
             item.state === 'checked'
               ? 'line-through text-muted-foreground'
               : item.state === 'invalid'
@@ -368,6 +369,7 @@ function AdvancedItemRow({
             <div className="flex items-baseline gap-2">
               <span
                 onDoubleClick={() => { setDraft(item.text); setEditing(true) }}
+                title={item.text || undefined}
                 className={`text-sm cursor-default truncate ${
                   item.state === 'checked'
                     ? 'line-through text-muted-foreground'
