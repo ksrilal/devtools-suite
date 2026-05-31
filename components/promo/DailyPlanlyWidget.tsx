@@ -3,24 +3,10 @@
 import React, { useEffect, useRef, useState } from 'react'
 import { createPortal } from 'react-dom'
 import Link from 'next/link'
-import { ChevronRight, X, ExternalLink } from 'lucide-react'
+import Image from 'next/image'
+import { X, ExternalLink } from 'lucide-react'
 
 const STORAGE_KEY = 'dailyplanly_promo_dismissed_until'
-
-function Logo({ className = 'h-6 w-6' }: { className?: string }) {
-  return (
-    <svg
-      viewBox="0 0 64 64"
-      fill="none"
-      xmlns="http://www.w3.org/2000/svg"
-      className={className}
-      aria-hidden
-    >
-      <rect width="64" height="64" rx="12" fill="#1e1b4b" />
-      <path d="M16 40 L28 24 L38 34 L48 20" stroke="#a855f7" strokeWidth="4" strokeLinecap="round" strokeLinejoin="round" />
-    </svg>
-  )
-}
 
 export default function DailyPlanlyWidget(): JSX.Element | null {
   const [expanded, setExpanded] = useState(false)
@@ -152,7 +138,7 @@ export default function DailyPlanlyWidget(): JSX.Element | null {
             <div className="flex items-center justify-between px-4 py-3">
               <div className="flex items-center gap-3">
                 <div className="rounded-full bg-gradient-to-br from-[#2b235a] to-[#5b21b6] p-1 overflow-hidden">
-                  <img src="/dailyplanly.png" alt="DailyPlanly" className="h-7 w-7 object-cover block" />
+                  <Image src="/dailyplanly.png" alt="DailyPlanly" width={28} height={28} className="object-cover block" />
                 </div>
                 <div>
                   <div className="text-sm font-semibold text-[#e9d5ff]">DailyPlanly</div>
@@ -244,10 +230,12 @@ export default function DailyPlanlyWidget(): JSX.Element | null {
             <div className="flex items-center justify-center">
               <div className="rounded-full bg-white/6 ring-1 ring-white/6 p-1 flex items-center justify-center overflow-hidden">
                 <div className="rounded-full bg-white/10 mb-1 flex items-center justify-center">
-                  <img
+                  <Image
                     src="/dailyplanly.png"
                     alt="DailyPlanly"
-                    className="h-8 w-8 rounded-full object-cover"
+                    width={32}
+                    height={32}
+                    className="rounded-full object-cover"
                   />
                 </div>
               </div>
