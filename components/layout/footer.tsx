@@ -56,7 +56,7 @@ export function Footer() {
             </p>
 
             {/* DailyPlanly promo*/ }
-            <Link href="/" className="inline-flex items-center mt-10 font-semibold mb-3 hover:opacity-80 transition-opacity">
+            <Link href="https://dailyplanly.com" className="inline-flex items-center mt-10 font-semibold mb-3 hover:opacity-80 transition-opacity">
               <Image src="/dailyplanly.png" alt="" width={22} height={22} className="rounded-sm object-cover shrink-0" />
               <span style={{ background: 'linear-gradient(180deg, #7c3aed, #a855f7)', WebkitBackgroundClip: 'text', WebkitTextFillColor: 'transparent' }}>Daily</span>Planly
             </Link>
