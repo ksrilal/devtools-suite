@@ -211,21 +211,24 @@ export default function DailyPlanlyWidget(): JSX.Element | null {
           <button
             onClick={() => openPanel()}
             aria-label="Open DailyPlanly panel"
-            className="absolute right-0 flex items-center justify-center h-14 w-20 rounded-full bg-gradient-to-b from-[#7c3aed] via-[#8b5cf6] to-[#a855f7] shadow-[0_14px_40px_rgba(124,58,237,0.22)] border border-purple-600/40 transition-all duration-200 py-2 overflow-visible z-50"
+            className="absolute right-0 flex items-center justify-center h-40 w-14 rounded-full bg-gradient-to-b from-[#7c3aed] via-[#8b5cf6] to-[#a855f7] shadow-[0_14px_40px_rgba(124,58,237,0.22)] border border-purple-600/40 transition-all duration-200 overflow-visible z-50 pointer-events-auto"
             style={{ top: 0 }}
             data-expanded={expanded}
             data-pill-animating={pillAnimatingOut}
           >
-            <div className="absolute -right-4 top-4 w-5 h-16 rounded-full bg-gradient-to-b from-[#7c3aed] to-[#a855f7] opacity-10 blur-lg pointer-events-none" />
+            <div className="absolute -right-4 top-6 w-5 h-16 rounded-full bg-gradient-to-b from-[#7c3aed] to-[#a855f7] opacity-10 blur-lg pointer-events-none" />
 
             <div className="mr-3 p-3 rounded-full bg-white/6 ring-1 ring-white/6">
-              <div className="rounded-full bg-white/10 p-2">
-                <Logo className="h-7 w-7 text-white" />
+              <div className="rounded-full bg-white/10 p-3">
+                <Logo className="h-8 w-8 text-white" />
               </div>
             </div>
 
             <div className="flex-1 flex items-center justify-center w-full">
-              <div className="text-white text-sm font-semibold tracking-wider text-center drop-shadow-md leading-tight whitespace-nowrap transform -rotate-90 origin-center">
+              <div
+                className="text-white text-sm font-semibold tracking-wider text-center drop-shadow-md leading-tight whitespace-nowrap transform -rotate-90 origin-center"
+                style={{ marginRight: '3rem' }}
+              >
                 DailyPlanly
               </div>
             </div>
