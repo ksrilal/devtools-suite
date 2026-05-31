@@ -138,7 +138,13 @@ export default function DailyPlanlyWidget(): JSX.Element | null {
           <div
             ref={panelRef}
             className="absolute transition-all duration-300 ease-in-out transform"
-            style={{ width: 280, right: 64 }}
+            style={{
+              width: 280,
+              right: 64,
+              opacity: expanded ? 1 : 0,
+              transform: expanded ? 'scale(1) translateY(0)' : 'scale(0.95) translateY(-8px)',
+              pointerEvents: expanded ? 'auto' : 'none',
+            }}
             data-expanded={expanded}
             data-panel-animating={panelAnimatingOut}
           >
@@ -211,26 +217,51 @@ export default function DailyPlanlyWidget(): JSX.Element | null {
           <button
             onClick={() => openPanel()}
             aria-label="Open DailyPlanly panel"
-            className="absolute right-0 flex items-center justify-center h-28 w-14 rounded-full bg-gradient-to-b from-[#7c3aed] via-[#8b5cf6] to-[#a855f7] shadow-[0_14px_40px_rgba(124,58,237,0.22)] border border-purple-600/40 transition-all duration-200 overflow-visible z-50 pointer-events-auto"
-            style={{ top: 0 }}
+            className="absolute right-0 flex flex-col items-center justify-between py-4 h-36 w-16 rounded-full bg-gradient-to-b from-[#7c3aed] via-[#8b5cf6] to-[#a855f7] shadow-[0_14px_40px_rgba(124,58,237,0.22)] border border-purple-600/40 transition-all duration-300 z-50 pointer-events-auto"
+            style={{
+              top: 0,
+              opacity: pillAnimatingOut ? 0 : 1,
+              transform: pillAnimatingOut ? 'scale(0.95)' : 'scale(1)',
+            }}
             data-expanded={expanded}
             data-pill-animating={pillAnimatingOut}
           >
-            <div className="absolute pointer-events-none opacity-10 blur-lg" style={{ left: -18, top: '50%', width: 20, height: 72, transform: 'translateY(-50%)', borderRadius: 9999, background: 'linear-gradient(180deg,#7c3aed,#a855f7)' }} />
+            {/* Decorative glow effect */}
+            <div
+              className="absolute pointer-events-none opacity-10 blur-lg"
+              style={{
+                left: -20,
+                top: '50%',
+                width: 24,
+                height: 80,
+                transform: 'translateY(-50%)',
+                borderRadius: 9999,
+                background: 'linear-gradient(180deg, #7c3aed, #a855f7)',
+              }}
+            />
 
-            <div className="mr-3 p-2 rounded-full bg-white/6 ring-1 ring-white/6 overflow-hidden flex items-center justify-center" style={{ minWidth: 44 }}>
-              <div className="rounded-full bg-white/10 p-1 flex items-center justify-center" style={{ width: 36, height: 36 }}>
-                <img src="/dailyplanly.png" alt="DailyPlanly" className="h-7 w-7 rounded-full object-cover" />
+            {/* Top: Logo */}
+            <div className="flex items-center justify-center">
+              <div className="rounded-full bg-white/6 ring-1 ring-white/6 p-2 flex items-center justify-center overflow-hidden">
+                <div className="rounded-full bg-white/10 p-1 flex items-center justify-center">
+                  <img
+                    src="/dailyplanly.png"
+                    alt="DailyPlanly"
+                    className="h-6 w-6 rounded-full object-cover"
+                  />
+                </div>
               </div>
             </div>
 
-            <div className="flex-1 flex items-center justify-center w-full relative">
-              <div className="text-white text-sm font-semibold tracking-wider text-center drop-shadow-md leading-tight whitespace-nowrap transform -rotate-90 -translate-y-1/2 origin-center absolute left-1/2 top-1/2" style={{ translate: '-50% -50%' }}>
+            {/* Middle: Rotated label */}
+            <div className="flex items-center justify-center flex-1">
+              <div className="text-white text-xs font-semibold tracking-wider whitespace-nowrap drop-shadow-md transform -rotate-90">
                 DailyPlanly
               </div>
             </div>
 
-            <div className="ml-3 mr-1 text-white/90">
+            {/* Bottom: Chevron */}
+            <div className="flex items-center justify-center text-white/90">
               <ChevronRight className="w-4 h-4 transform rotate-90" />
             </div>
           </button>
