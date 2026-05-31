@@ -28,7 +28,11 @@ export default function DailyPlanlyWidget(): JSX.Element | null {
   const [mounted, setMounted] = useState(false)
   const panelRef = useRef<HTMLDivElement | null>(null)
   const [topOffset, setTopOffset] = useState<number | null>(null)
-  const [panelHeight, setPanelHeight] = useState(0)
+  // panelHeight removed; keep minimal state
+  const [showPill, setShowPill] = useState(true)
+  const [pillAnimatingOut, setPillAnimatingOut] = useState(false)
+  const [panelMounted, setPanelMounted] = useState(false)
+  const [panelAnimatingOut, setPanelAnimatingOut] = useState(false)
 
   useEffect(() => {
     setMounted(true)
@@ -87,14 +91,7 @@ export default function DailyPlanlyWidget(): JSX.Element | null {
     return () => document.removeEventListener('mousedown', onDown)
   }, [panelMounted])
 
-  // update measured panel height when panel mounts
-  useEffect(() => {
-    if (panelMounted && panelRef.current) {
-      setPanelHeight(panelRef.current.offsetHeight)
-    } else {
-      setPanelHeight(0)
-    }
-  }, [panelMounted])
+  // panel height measurement removed (not needed) - keep placeholder state for future use
 
   const OPEN_CLOSE_DURATION = 260
 
@@ -134,17 +131,16 @@ export default function DailyPlanlyWidget(): JSX.Element | null {
   if (!visible) return null
 
   const content = (
-    // wrapper fixed near header on the right edge; top is calculated from header
     <div className="fixed z-50 pointer-events-none" style={topOffset ? { top: topOffset, right: 16 } : { right: 16 }}>
-      <div className="relative pointer-events-auto" style={{ width: 320 /* space for panel + pill */ }}>
+      <div className="relative pointer-events-auto" style={{ width: 320 }}>
         {/* Panel positioned to the left of the pill so it doesn't overlap */}
         {panelMounted && (
           <div
             ref={panelRef}
-            className={`absolute transition-all duration-300 ease-in-out transform ${
-              expanded && !panelAnimatingOut ? 'opacity-100 translate-x-0 pointer-events-auto' : 'opacity-0 translate-x-4 pointer-events-none'
-            }`}
+            className="absolute transition-all duration-300 ease-in-out transform"
             style={{ width: 280, right: 64 }}
+            data-expanded={expanded}
+            data-panel-animating={panelAnimatingOut}
           >
             <div className="w-72 rounded-2xl backdrop-blur-md bg-gradient-to-br from-[#1e1b4b]/95 via-[#6d28d9]/80 to-[#a855f7]/40 border border-purple-600/20 shadow-[0_16px_40px_rgba(168,85,247,0.22)] ring-1 ring-purple-400/10 overflow-hidden">
             <div className="flex items-center justify-between px-4 py-3">
@@ -171,7 +167,7 @@ export default function DailyPlanlyWidget(): JSX.Element | null {
             <div className="px-4 pb-4">
               <h3 className="text-lg font-semibold text-white">Plan better. Achieve more.</h3>
               <p className="mt-2 text-sm text-purple-100/80">DailyPlanly helps you organize your life with powerful planners, checklists, routines, habit trackers, and goal-focused productivity templates.</p>
-              <p className="mt-2 text-xs text-purple-200/70">Whether you're improving your health, finances, studies, career, or daily routines, DailyPlanly provides ready-to-use systems to help you stay consistent and productive.</p>
+              <p className="mt-2 text-xs text-purple-200/70">Whether you are improving your health, finances, studies, career, or daily routines, DailyPlanly provides ready-to-use systems to help you stay consistent and productive.</p>
 
               <div className="mt-3 flex flex-wrap gap-2">
                 {[
@@ -208,16 +204,17 @@ export default function DailyPlanlyWidget(): JSX.Element | null {
             </div>
           </div>
         </div>
+        )}
 
         {/* Collapsed vertical tab (purple DevTools-style pill) */}
         {(showPill || pillAnimatingOut) && (
           <button
             onClick={() => openPanel()}
             aria-label="Open DailyPlanly panel"
-            className={`absolute right-0 flex items-center justify-center h-14 w-20 rounded-full bg-gradient-to-b from-[#7c3aed] via-[#8b5cf6] to-[#a855f7] shadow-[0_14px_40px_rgba(124,58,237,0.22)] border border-purple-600/40 transition-all duration-200 py-2 overflow-visible z-50 ${
-              pillAnimatingOut ? 'opacity-0 translate-x-4' : 'opacity-100 translate-x-0'
-            }`}
+            className="absolute right-0 flex items-center justify-center h-14 w-20 rounded-full bg-gradient-to-b from-[#7c3aed] via-[#8b5cf6] to-[#a855f7] shadow-[0_14px_40px_rgba(124,58,237,0.22)] border border-purple-600/40 transition-all duration-200 py-2 overflow-visible z-50"
             style={{ top: 0 }}
+            data-expanded={expanded}
+            data-pill-animating={pillAnimatingOut}
           >
             <div className="absolute -right-4 top-4 w-5 h-16 rounded-full bg-gradient-to-b from-[#7c3aed] to-[#a855f7] opacity-10 blur-lg pointer-events-none" />
 
@@ -234,7 +231,7 @@ export default function DailyPlanlyWidget(): JSX.Element | null {
             </div>
 
             <div className="ml-3 mr-1 text-white/90">
-              <ChevronRight className={`w-4 h-4 transform ${expanded ? 'rotate-270' : 'rotate-90'}`} />
+              <ChevronRight className="w-4 h-4 transform rotate-90" />
             </div>
           </button>
         )}
